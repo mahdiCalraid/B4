@@ -1,0 +1,198 @@
+Model Routing Guide for the Second Brain
+
+1. Model Palette & Price Tiers (Text Only)
+
+1.1 Open-Source via DeepInfra
+	•	gpt-oss-20b (DeepInfra)
+	•	Price: $0.03 / 1M input and $0.14 / 1M output tokens.  ￼
+	•	21B MoE, tuned for general chat + tool use.
+	•	Best for cheap extraction, tagging, simple routing, low-stakes chat.
+	•	gpt-oss-120b (DeepInfra)
+	•	Price: $0.05 / 1M input and $0.24 / 1M output tokens.  ￼
+	•	117B MoE; strong reasoning, better long-form writing and planning.
+	•	Good for mid-tier reasoning where cost still matters.
+
+Rule of thumb: 120B ≈ “almost frontier-grade” at a fraction of proprietary prices; 20B ≈ “smart 3.5-ish” extraction/workhorse.
+
+⸻
+
+1.2 Google Gemini (via Gemini API / Vertex)
+	•	gemini-2.5-flash-lite
+	•	Price: $0.10 / 1M input and $0.40 / 1M output tokens.  ￼
+	•	Designed for lowest cost + lowest latency in the 2.5 family.
+	•	Great for high-volume tasks and fast chat with modest reasoning.
+	•	gemini-2.5-flash
+	•	Price: ~$0.30 / 1M input, $2.50 / 1M output tokens.  ￼
+	•	Stronger reasoning than Flash-Lite; still efficient and fast.
+	•	Good for balancing quality vs. cost for user-facing chat.
+	•	gemini-2.5-pro
+	•	Price (Vertex AI): roughly $1.25–2.50 / 1M input and $10–15 / 1M output, depending on context/batch.  ￼
+	•	Top-tier Gemini model with leading reasoning benchmarks and long context.  ￼
+	•	Excellent for coding, math, and complex reasoning.
+
+⸻
+
+1.3 OpenAI GPT Family (map to your gpt-5.* slots)
+
+Current public pricing is for the 4.1/4o family. You can conceptually map:
+	•	gpt-5-nano → gpt-4.1-nano
+	•	Price: $0.10 / 1M input and $0.40 / 1M output tokens.  ￼
+	•	Ultra-cheap, very fast, basic reasoning.
+	•	gpt-5-mini → gpt-4o-mini (or gpt-4.1-mini if you prefer)
+	•	gpt-4o-mini price: $0.15 / 1M input and $0.60 / 1M output.  ￼
+	•	“Everyday workhorse”: strong chat, good reasoning, great cost.
+	•	gpt-5.1 (or “top OpenAI reasoning model”)
+	•	Use the current flagship reasoning model in your OpenAI account (e.g. GPT-4.1, GPT-4.5, GPT-5-thinking, o3-mini, etc.).
+	•	Frontier performance, but price in the multi-$ per 1M to tens of $ per 1M tokens range. GPT-4.5, for example, is reported around $75 per 1M tokens in some deployments.  ￼
+
+Implementation trick:
+In code, keep your logical names (gpt-5-mini, gpt-5-nano, gpt-5.1) and map them in one config file to whatever concrete OpenAI models are best at the moment.
+
+⸻
+
+1.4 xAI Grok
+	•	grok-3
+	•	Typical API prices: about $3.5 / 1M input and $10.5 / 1M output tokens.  ￼
+	•	Optimized for web/X/news reading and real-time search.
+	•	Good for news, X-posts, opinion-heavy topics, bias-sensitive analysis.
+
+⸻
+
+2. Tiers for the Second Brain
+
+For your second brain, let’s define 7 tiers (0–6). Each tier has:
+	•	Priority: cost / speed / quality
+	•	Typical Second Brain role
+	•	Recommended model(s)
+
+Tier 0 – System Health & Trivial Parsing
+
+Use when:
+	•	You just need a rough answer or sanity check.
+	•	Examples: “Is this JSON valid?”, “Does this look like a phone number?”, trivial logs.
+
+Priorities:
+	•	Cost: Ultra-low
+	•	Speed: High
+	•	Quality: Low but acceptable
+
+Suggested models:
+	•	gpt-5-nano → map to gpt-4.1-nano
+	•	or gpt-oss-20b (if you want all Tier-0 through DeepInfra)
+
+⸻
+
+Tier 1 – Cheap Extraction & Tagging (Ingestion Waterfall Stage 1)
+
+Use when:
+	•	You ingest raw text into the second brain and only need simple structure:
+	•	detect language
+	•	basic classification (note vs. task vs. article)
+	•	quick “people/place/organization” extraction
+	•	Mistakes are acceptable; later tiers can refine.
+
+Examples in your system:
+	•	Scraping an X-post and just pulling @handles and obvious names.
+	•	Tagging a document as project: openbook, topic: health-equity.
+
+Priorities:
+	•	Cost: Very low (this may run on everything you ingest)
+	•	Speed: High
+	•	Quality: “Good enough”
+
+Suggested models:
+	•	Primary: gpt-oss-20b via DeepInfra  ￼
+	•	Fallback / alternative: gpt-5-nano (OpenAI nano) for very small prompts.
+
+⸻
+
+Tier 2 – Structured Extraction & Memory Anchors
+
+(Ingestion Waterfall Stage 2)
+
+Use when:
+	•	You need reliable structured data, not just tags:
+	•	canonical People / Orgs / Places
+	•	Events (what happened? when?)
+	•	Tasks & commitments
+	•	References (links, file paths, repo names)
+
+Examples in your system:
+	•	From a meeting transcript, extract:
+	•	who is who, roles, relationships
+	•	action items with due dates
+	•	“memory anchors” to store in Firestore/Pinecone.
+
+Priorities:
+	•	Cost: low–moderate
+	•	Speed: high (this will still run frequently)
+	•	Quality: moderate–high for extraction
+
+Suggested models:
+	•	Primary: gemini-2.5-flash-lite (fast + cheap + decent reasoning).  ￼
+	•	Cheaper alt: gpt-oss-20b when doc is short & simple.
+	•	OpenAI alt: gpt-5-nano for small snippets.
+
+⸻
+
+Tier 3 – Summarization, Note-Making & Light Reasoning
+
+(Ingestion “Summarizer” + Everyday Chat)
+
+Use when:
+	•	You want nice summaries and linking between memories:
+	•	daily note → summary + bullet tasks
+	•	“connect this note to all OpenBook tasks about Florida MRFs”
+	•	Light reasoning and planning:
+	•	“What are the 3 key risks in these meeting notes?”
+
+Priorities:
+	•	Cost: Moderate
+	•	Speed: High (used in daily interaction)
+	•	Quality: Good; not extreme reasoning
+
+Suggested models:
+	•	Primary: gemini-2.5-flash for better quality than Flash-Lite with strong speed.  ￼
+	•	Alt: gpt-5-mini → mapped to gpt-4o-mini (excellent quality/cost).  ￼
+	•	OSS option: gpt-oss-120b if you want to keep data on DeepInfra only, at still-low cost.  ￼
+
+⸻
+
+Tier 4 – Deep Second-Brain Reasoning & Planning
+
+Use when:
+	•	You want real thinking about your life, projects, and OpenBook:
+	•	“Given these 20 notes, what are the strategic priorities for OpenBook this month?”
+	•	“Review all memory entries tagged ‘procrastination’ and design a weekly routine.”
+	•	Multi-step reasoning, trade-off analysis, long instructions.
+
+Priorities:
+	•	Cost: Higher but controlled
+	•	Speed: medium is OK
+	•	Quality: High reasoning + coherence over long context
+
+Suggested models:
+	•	Primary (OpenAI slot): gpt-5.1 → map to your best reasoning model (e.g. GPT-4.1, GPT-4.5, or GPT-5-thinking in your account).  ￼
+	•	Alternative (Gemini slot): gemini-2.5-pro when you want Google’s reasoning profile, especially for math/coding heavy reasoning.  ￼
+	•	Cheaper fallback: gpt-oss-120b for semi-frontier reasoning at DeepInfra prices.
+
+Typical tasks:
+	•	“Architect the second-brain Firestore schema; identify all collections and indexes.”
+	•	“Design a full ETL plan from raw MRFs into my OpenBook warehouse.”
+	•	Long multi-document analysis (specs + Jira tickets + notes).
+
+⸻
+
+Tier 5 – Coding, Refactoring & System Design
+
+Use when:
+	•	You’re working on code for:
+	•	ingestion pipelines
+	•	Firestore/BigQuery models
+	•	vector search, FAISS flows
+	•	front-end for your OpenBook app
+
+Priorities:
+	•	Quality: Strong coding ability
+	•	Speed: moderate–high (you’ll iterate a lot)
+	•	Cost: moderate–high (but less frequent than Tier-1/2 tasks)

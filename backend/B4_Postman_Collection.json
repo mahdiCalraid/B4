@@ -1,0 +1,222 @@
+{
+  "info": {
+    "name": "B4 Backend - Module System",
+    "description": "API collection for testing B4 backend modules",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Service Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List All Modules",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/modules/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Module Info - ChatAgent",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/modules/ChatAgentModule",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "ChatAgentModule"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chat - Hello",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Hello! How are you?\",\n  \"user_id\": \"test_user\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chat - Help",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"What can you help me with?\",\n  \"user_id\": \"test_user\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chat - Request Analysis",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Please analyze the oil market situation\",\n  \"user_id\": \"test_user\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analyze - Oil Market",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Oil prices surge to $100/barrel amid supply concerns and geopolitical tensions in the Middle East. Markets react negatively.\",\n  \"user_id\": \"analyst_1\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/AnalyzerModule/process",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "AnalyzerModule", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analyze - Tech News",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"New AI breakthrough announced by leading tech company. Researchers develop advanced machine learning algorithms that outperform previous models.\",\n  \"params\": {\n    \"include_details\": true\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/AnalyzerModule/process",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "AnalyzerModule", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analyze - Political News",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"President announces new economic policy. The government plans to increase interest rates to combat rising inflation. Economists predict market volatility.\",\n  \"user_id\": \"policy_analyst\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/AnalyzerModule/process",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "AnalyzerModule", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Chat - Explicit Module",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"General inquiry\",\n  \"user_id\": \"test_user\",\n  \"module\": \"ChatAgentModule\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/modules/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "modules", "chat"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

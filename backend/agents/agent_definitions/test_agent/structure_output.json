@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "properties": {
+    "understanding": {
+      "type": "string",
+      "description": "Brief statement showing comprehension of the input"
+    },
+    "entities": {
+      "type": "object",
+      "description": "All extracted entities organized by type",
+      "properties": {
+        "people": {
+          "type": "array",
+          "description": "All people mentioned",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "role": {"type": "string"}
+            },
+            "required": ["name"]
+          }
+        },
+        "places": {
+          "type": "array",
+          "description": "All locations mentioned",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "type": {"type": "string"}
+            },
+            "required": ["name"]
+          }
+        },
+        "organizations": {
+          "type": "array",
+          "description": "All organizations mentioned",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "type": {"type": "string"}
+            },
+            "required": ["name"]
+          }
+        },
+        "dates": {
+          "type": "array",
+          "description": "All dates or time references",
+          "items": {
+            "type": "string"
+          }
+        },
+        "other": {
+          "type": "array",
+          "description": "Other notable entities",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["people", "places", "organizations", "dates"]
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Detailed reasoning about the content and what it means"
+    },
+    "sentiment": {
+      "type": "string",
+      "description": "Overall sentiment (positive, negative, neutral, mixed)"
+    },
+    "key_facts": {
+      "type": "array",
+      "description": "Most important facts from the input",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string",
+      "description": "Concise summary of the entire input"
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence score from 0.0 to 1.0"
+    }
+  },
+  "required": ["understanding", "entities", "reasoning", "sentiment", "key_facts", "summary", "confidence"]
+}

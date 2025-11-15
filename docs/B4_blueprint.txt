@@ -1,0 +1,549 @@
+Lean World‑Model Startup Blueprint v1.0
+
+Date: Nov 9, 2025
+Owner: Founder/CTO (you)
+Status: Draft for implementation
+
+⸻
+
+0) Executive Summary
+
+We’re building a lean, low‑cost system that ingests world information (news, social media, email, forums), extracts structured facts, and stores them in a compact Event‑centric world model. A waterfall of agents escalates from fast rules → classical NLP → LLMs only when needed. We persist raw content cheaply in object storage, keep tiny NoSQL posting‑list indexes for fast retrieval, and expose a simple API that supports 1‑hop and 2‑hop queries (e.g., “What did X say about Y in the last 7 days?” and “Who are Y’s top co‑mentioned neighbors?”).
+
+Core abstraction: Event = something that happened/was said, linked to entities, topics, time, place, claims, evidence, and optional implications.
+Goal: operationally cheap, explainable, auditable, and extensible.
+
+⸻
+
+1) Principles
+	•	Cheap‑first: Raw in GCS; minimal Firestore writes; LLM used sparingly with strict JSON schemas.
+	•	Append‑only & idempotent: Deterministic IDs; nothing is overwritten—conflicts become counter‑claims.
+	•	Event‑centric: Everything hangs off Events (entities, topics, predicates, evidence).
+	•	Two‑hop retrieval: Posting lists for 1‑hop; light edge table for 2‑hop exploration.
+	•	Observability & provability: Every claim tied to source URLs and timestamps; structured logs.
+
+⸻
+
+2) Key Use Cases & Personas
+	•	Analyst: “Summarize today’s energy policy moves across G7.”
+	•	Researcher: “Show what ent_trump said about ent_oil in October; include counter‑claims.”
+	•	Ops: “Alert when price‑target predicates appear for oil/gas/metals.”
+	•	Exec Brief: “Generate a 1‑page situation brief for topic.economy.energy.oil this week.”
+
+⸻
+
+3) High‑Level Architecture
+
+Sources: X, Reddit, News (RSS/APIs), Telegram, LinkedIn, Forums, Email.
+Stages (waterfall):
+	1.	Ingest & Normalize: HTML strip, Unicode normalize, URL expand, language detect, checksum, simhash.
+	2.	Fast Tags: Regex/dictionaries (people/orgs, commodities, currencies, dates).
+	3.	NER + Rules: spaCy/Flair + custom patterns.
+	4.	Event Classify: Small model routes to kind buckets.
+	5.	Claim Extract: Templated rules → fallback to LLM with strict JSON schema.
+	6.	Topic Assign: Map to curated taxonomy (≤ ~150 leaves).
+	7.	Entity Canonicalize: Alias map; optional Wikidata cache; disambiguation fallback to LLM.
+	8.	Implication Heuristics: Emit standard forms (ban, cap, sanction, appointment, policy‑target).
+	9.	Cluster to Event: Sentence embeddings + time window; merge evidence docs.
+	10.	Index Update: Tiny date‑sharded posting lists by entity/topic/predicate/geo.
+
+Storage & Compute:
+	•	GCS for raws (Nearline/Coldline lifecycle).
+	•	Firestore (Native) for small records + posting lists.
+	•	BigQuery for edges/co‑mention analytics, evaluations, and optional vector search.
+	•	Cloud Run (Jobs) + Pub/Sub for pipeline orchestration.
+	•	Secret Manager & IAM for credentials and least‑privilege roles.
+
+⸻
+
+4) Data Model
+
+4.1 Raw Document (immutable pointer)
+
+{
+  "doc_id": "src_x_2025-11-02_0af3d2",
+  "source": "x|reddit|news|email|telegram|linkedin|forum",
+  "url": "https://…",
+  "author_handle": "…",
+  "author_name": "…",
+  "published_at": "2025-11-02T13:01:00Z",
+  "ingested_at": "2025-11-02T13:05:42Z",
+  "lang": "en",
+  "title": "…",
+  "gcs_uri": "gs://world/raw/x/2025/11/src_x_2025-11-02_0af3d2.json",
+  "checksum": "sha256:…",
+  "simhash": "…",
+  "length_chars": 842
+}
+
+4.2 Event (core world‑model unit)
+
+{
+  "event_id": "evt_2025-11-02_b91c1d",
+  "kind": "statement|policy|market_move|conflict|election|legal|macro|tech_release|other",
+  "timespan": {"start":"2025-11-02T13:00:00Z","end":null},
+  "where": {"geo":"US","iso2":"US","admin1":"US-DC","s2":"47c3a9"},
+  "entities": ["ent_trump","ent_oil"],
+  "topics": ["topic.economy.energy.oil","topic.politics.us.executive"],
+  "claims": [
+    {
+      "text": "President Trump said oil should not exceed $100/bbl.",
+      "structured": {
+        "actor": "ent_trump",
+        "predicate": "policy_target_max_price",
+        "object": "ent_oil",
+        "value": {"amount":100,"unit":"USD/bbl"},
+        "modality": "said"
+      },
+      "confidence": 0.78
+    }
+  ],
+  "implications": [
+    {"category":"markets.energy","statement":"Possible price cap signaling","confidence":0.6}
+  ],
+  "evidence_doc_ids": ["src_x_2025-11-02_0af3d2"],
+  "summary": "In remarks on …",
+  "source_reliability": 0.6,
+  "version": 1,
+  "created_at": "2025-11-02T13:06:05Z",
+  "updated_at": "2025-11-02T13:06:05Z"
+}
+
+4.3 Entity (canonical)
+
+{
+  "entity_id": "ent_trump",
+  "type": "Person|Org|Commodity|Country|Region|Instrument|Concept",
+  "name": "Donald Trump",
+  "aliases": ["President Trump","Trump, Donald"],
+  "external": {"wikidata": "Q22686"},
+  "last_seen_at": "2025-11-02T13:05:00Z",
+  "hot_edges": [
+    {"pred":"policy_target_max_price","obj":"ent_oil","weight":4,"last":"2025-11-02"}
+  ]
+}
+
+4.4 Topic (taxonomy node)
+
+{
+  "topic_id": "topic.economy.energy.oil",
+  "path": ["economy","energy","oil"],
+  "aliases": ["oil","crude","WTI","Brent"],
+  "last_refreshed": "2025-11-02T00:00:00Z"
+}
+
+4.5 Edge (2‑hop support; persisted in BigQuery and/or Firestore)
+
+{
+  "subj": "ent_trump",
+  "pred": "policy_target_max_price",
+  "obj": "ent_oil",
+  "first_seen": "2025-11-02",
+  "last_seen": "2025-11-02",
+  "weight": 1,
+  "evidence_event_ids": ["evt_2025-11-02_b91c1d"]
+}
+
+
+⸻
+
+5) Firestore (Native) Collections Map
+
+Collections
+	•	docs/{doc_id} — Raw pointers
+	•	events/{event_id} — Event records
+	•	entities/{entity_id} — Canonical entities
+	•	topics/{topic_id} — Taxonomy nodes
+	•	edges/{edge_id} — Optional edges
+	•	idx_entity_events/{entity_id}/d/{YYYYMMDD}[_chunkN] — Posting lists by entity/date
+	•	idx_topic_events/{topic_id}/d/{YYYYMMDD}[_chunkN] — Posting lists by topic/date
+	•	idx_predicate_events/{predicate}/d/{YYYYMMDD}[_chunkN] — Posting lists by predicate/date
+	•	idx_geo_events/{s2cell}/d/{YYYYMMDD}[_chunkN] — Posting lists by geo/date
+	•	runs/{run_id} — Pipeline bookkeeping
+
+Chunking policy: cap event_ids ~500 per shard; when full, open _chunk{N+1}.
+TTL: optional auto‑delete posting‑list shards older than N days.
+
+Composite Indexes (minimal)
+
+{
+  "indexes": [
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath":"kind","order":"ASCENDING"},
+        {"fieldPath":"timespan.start","order":"DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "edges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath":"subj","order":"ASCENDING"},
+        {"fieldPath":"weight","order":"DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "docs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath":"source","order":"ASCENDING"},
+        {"fieldPath":"ingested_at","order":"DESCENDING"}
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {"collectionGroup":"events","fieldPath":"summary","indexes":[]},
+    {"collectionGroup":"events","fieldPath":"claims","indexes":[]},
+    {"collectionGroup":"events","fieldPath":"implications","indexes":[]}
+  ]
+}
+
+Rules (backend‑only default)
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isBackend() {
+      return request.auth.token.email == "world-model-backend@YOUR-PROJECT.iam.gserviceaccount.com";
+    }
+    match /{document=**} { allow read, write: if false; }
+    match /{document=**} { allow read, write: if isBackend(); }
+    // Optional: public read for /events with redaction
+    // match /events/{event_id} { allow read: if true; }
+  }
+}
+
+
+⸻
+
+6) BigQuery Tables
+	•	edges_daily (DATE day, STRING subj, STRING pred, STRING obj, INT64 weight, ARRAY<STRING> evidence_event_ids)
+	•	eval_metrics (precision/recall/F1 by stage, source, predicate, topic; plus token/cost stats)
+	•	event_vectors (optional) for vector search over summary/claims.text (use partitioning + clustering by day and topic)
+
+⸻
+
+7) Pydantic Models (v2) & Why
+
+Typed, validated models act as contracts between stages and as schemas for LLM outputs. They coerce/validate inputs, ensure invariants (e.g., claim actors exist in entities), and generate JSON Schemas you feed the LLM.
+
+from typing import List, Optional, Literal
+from pydantic import BaseModel, Field
+from datetime import datetime
+
+class Timespan(BaseModel):
+    start: datetime
+    end: Optional[datetime] = None
+
+class Where(BaseModel):
+    geo: Optional[str] = None
+    iso2: Optional[str] = None
+    admin1: Optional[str] = None
+    s2: Optional[str] = None
+
+class StructuredClaim(BaseModel):
+    actor: Optional[str] = None
+    predicate: str
+    object: Optional[str] = None
+    value: Optional[dict] = None
+    modality: Optional[str] = None
+
+class Claim(BaseModel):
+    text: str
+    structured: Optional[StructuredClaim] = None
+    confidence: Optional[float] = Field(default=None, ge=0, le=1)
+
+class Event(BaseModel):
+    event_id: str
+    kind: Literal["statement","policy","market_move","conflict","election","legal","macro","tech_release","other"]
+    timespan: Timespan
+    where: Optional[Where] = None
+    entities: List[str] = Field(default_factory=list)
+    topics: List[str] = Field(default_factory=list)
+    claims: List[Claim] = Field(default_factory=list)
+    implications: List[dict] = Field(default_factory=list)
+    evidence_doc_ids: List[str] = Field(default_factory=list)
+    summary: Optional[str] = None
+    source_reliability: Optional[float] = Field(default=None, ge=0, le=1)
+    version: int = 1
+    created_at: datetime
+    updated_at: datetime
+
+
+⸻
+
+8) Waterfall of Agents (detailed)
+	1.	Normalizer & Deduper: strip HTML, normalize, compute checksum/simhash, drop duplicates; store RawDoc pointer.
+	2.	Fast Tagger: regex dictionaries for people/orgs/commodities, numbers, units, currencies, money.
+	3.	NER + Rules: spaCy/Flair, pattern rules for monetary constraints and negations.
+	4.	Event Classifier: small model (e.g., logistic/SVM) to assign kind.
+	5.	Claim Extractor: template rules; if low‑confidence, LLM with JSON schema (Pydantic‑generated).
+	6.	Topic Assigner: maps to topic.* nodes (see §10 taxonomy).
+	7.	Entity Canonicalizer: alias service + fallback LLM disambiguation.
+	8.	Implication Heuristics: predicate templates for price targets, bans, sanctions, retractions, appointments.
+	9.	Event Cluster & Merge: embed sentences; cluster by cosine within 6–12h; merge as single Event with evidence list.
+	10.	Index Writer: update posting lists across entity/topic/predicate/geo shards.
+
+Escalation Rules: only call LLM if (a) rules/NER confidence < τ, (b) text contains predicate patterns requiring semantic parsing, or (c) canonicalization ambiguous.
+
+⸻
+
+9) Indexing & Retrieval
+
+Posting Lists (date‑sharded):
+	•	idx_entity_events/{entity_id}/d/{YYYYMMDD}[_chunkN]
+	•	idx_topic_events/{topic_id}/d/{YYYYMMDD}[_chunkN]
+	•	idx_predicate_events/{predicate}/d/{YYYYMMDD}[_chunkN]
+	•	idx_geo_events/{s2cell}/d/{YYYYMMDD}[_chunkN]
+
+1‑Hop Query: intersect posting lists in memory, then batch‑fetch events/{event_id}.
+2‑Hop Query: for a seed entity/topic, aggregate co‑mentioned entities over fetched Events (or precompute edges in BQ) → fetch their top recent Events.
+
+Examples:
+	•	Latest US oil items involving Trump, 7 days: entity=ent_trump ∩ topic=topic.economy.energy.oil across 7 shards.
+	•	Neighbors of ent_oil, 30 days: aggregate co‑mentions from Events, rank by frequency.
+
+⸻
+
+10) Taxonomy & Predicates
+
+Top‑level Topics:
+	•	politics (us, elections, executive, legislature, judiciary, intl_relations)
+	•	economy (macro, inflation, rates, energy.oil/gas/coal, metals, agriculture)
+	•	tech (ai, software, hardware, cybersecurity, internet)
+	•	commodities (oil, gas, copper, gold, wheat, corn)
+	•	sociology (public_morality, protests, demographics)
+	•	philosophy (ethics, epistemology, political_philosophy)
+	•	geography (regions, borders, cities)
+
+Common Predicates (examples):
+	•	policy_target_max_price, policy_target_min_price, ban, sanction, appoint, resign, announce, deny, approve, pass_bill, veto, sue, settle, indict, convict, acquit, merge, acquire, layoff, raise_funds, launch_product, security_incident, retraction_of_claim.
+
+⸻
+
+11) LLM Harness & Guardrails
+	•	Schema‑first prompting: use JSON Schema from Pydantic.
+	•	Budget caps: max tokens/day per source; hard failover to rules‑only mode when exceeded.
+	•	Truncation rules: only send salient spans; avoid prompt‑injection; strip code blocks and user mentions.
+	•	Confidence routing: attach calibrated scores; store alongside claims.
+
+Return Contract:
+
+{"event": EventSchema, "confidence": 0.0–1.0, "notes": "…"}
+
+
+⸻
+
+12) Connectors & Compliance
+	•	X/Reddit/News/Telegram/LinkedIn/Email via official APIs when possible; store watermarks.
+	•	Respect TOS/robots; throttle via Cloud Tasks; idempotent retries with backoff.
+	•	Per‑source parsers normalize timestamps and locales.
+
+⸻
+
+13) Entity & Geo Canonicalization
+	•	Alias Service: JSON/YAML map with synonyms and canonical IDs; admin UI for merges.
+	•	External IDs: Wikidata/ISO codes cached locally.
+	•	Geo: ISO‑3166 (country/admin1), S2 cells for spatial indexes.
+
+⸻
+
+14) Dedup, Idempotency, Clustering
+	•	Checksum (exact dup) + Simhash/Minhash (near‑dup).
+	•	Cluster Key: actor|predicate|object|time_window; deterministic event_id from hash.
+	•	Re‑clustering Job: periodically merge micro‑events; increment version; preserve evidence.
+
+⸻
+
+15) API Spec (internal)
+
+GET /events
+Params: entity[], topic[], predicate[], geo[], start, end, limit, after
+Returns: list of Event + pagination cursor.
+
+GET /neighbors
+Params: entity, days, k
+Returns: {neighbor_entity_id, weight}[] + top recent events per neighbor.
+
+GET /brief
+Params: topic, days, limit
+Returns: synthesized situation brief (retrieved Events + LLM summarization).
+
+⸻
+
+16) Observability & Cost
+	•	Metrics: ingest throughput, LLM tokens & $/day (by source), events/day, p50/p95 latency, error rates.
+	•	Logs: include run_id, doc_id, event_id; structured via OpenTelemetry.
+	•	Budgets/Alerts: GCP budget alerts; alert on token spikes, Firestore hot shards, BQ scanned bytes.
+	•	Dashboards: cost/time series, extraction accuracy, confusion matrices.
+
+⸻
+
+17) Evaluation & QA
+	•	Golden set (200–500 labeled items) across sources/predicates/topics.
+	•	Nightly eval: precision/recall/F1 per stage; drift detection; topic/predicate confusion.
+	•	Human‑in‑the‑loop: queue low‑confidence or contradictions for review; store adjudications.
+
+⸻
+
+18) Security & Privacy
+	•	IAM: separate service accounts per stage; least privilege; VPC‑SC optional.
+	•	Secrets: Secret Manager only.
+	•	PII/Exposure: redact personal data if public; keep raws private; provenance mandatory.
+	•	Audits: provenance + event version history for accountability.
+
+⸻
+
+19) I18N
+	•	Auto‑detect language; translate short spans only when required for extraction.
+	•	Transliterate names; unify entities across scripts using alias service + external IDs.
+
+⸻
+
+20) Backups, DR, Lifecycle
+	•	Firestore exports nightly to GCS; set lifecycle to Coldline after 90d.
+	•	GCS raws: Nearline (30d) → Coldline (90d) → Archive (1y) as needed.
+	•	Restore playbooks for Firestore and BQ.
+
+⸻
+
+21) CI/CD & IaC
+	•	Terraform for Firestore indexes, buckets, Pub/Sub, budgets, service accounts, IAM bindings.
+	•	Containers (Cloud Run Jobs/Services) per stage; pinned versions; blue/green deploys.
+	•	Testing gates in CI (unit, integration, golden‑set evals, schema checks).
+
+⸻
+
+22) Testing Strategy
+	•	Unit: Pydantic validators, parsers, canonicalizers.
+	•	Integration: ingest→event→index roundtrip on fixtures.
+	•	Load: posting‑list read patterns (N days × M facets).
+	•	Data Quality: duplicate rate, canonicalization accuracy, topic/predicate accuracy.
+
+⸻
+
+23) Team & Roles (initial 10–20 hires)
+	•	Head of Eng / Platform Lead — owns infra, CI/CD, SRE, cost.
+	•	Backend Lead — APIs, Firestore/BQ access patterns, posting‑list logic.
+	•	Data Eng (x2‑4) — connectors, ingestion, normalization, pipelines.
+	•	ML/NLP Eng (x2‑4) — NER, classifiers, embeddings, clustering, evals.
+	•	LLM Engineer (x1‑2) — prompt/schema design, confidence routing, cost tuning.
+	•	Ontology/Taxonomy PM (x1) — topics/predicates governance, aliases.
+	•	Security/Compliance (part‑time/contract) — IAM, audits, policies.
+	•	QA/Data Curators (x2‑4) — golden set, adjudication, labeling.
+	•	Product Manager — roadmap, KPIs, stakeholder needs.
+	•	Designer (optional) — ops console & briefs UX.
+
+RACI Highlights:
+	•	Event Schema: ML Eng (R), LLM Eng (A), Backend (C), PM (I).
+	•	Indexes & API: Backend (R/A), Platform (C), PM (I).
+	•	Taxonomy: Ontology PM (R/A), ML (C), QA (I).
+	•	Budgets/Alerts: Platform (R/A), PM (I).
+
+⸻
+
+24) Roadmap & Milestones
+
+Phase 0 (Week 1–2):
+	•	Terraform baseline; buckets, Firestore, Pub/Sub, budgets.
+	•	Ingest RSS+X; Normalizer & Deduper; store raws; minimal Pydantic models.
+	•	Event v1 with rules+NER; index writer; simple /events API.
+
+Phase 1 (Weeks 3–6):
+	•	Claim extractor LLM fallback with schema; Topic taxonomy v1; entity alias map + UI.
+	•	2‑hop neighbors via BigQuery edges; /neighbors API.
+	•	Ops Console v1 (filters, recent events, costs, error queue).
+
+Phase 2 (Weeks 7–10):
+	•	Re‑clustering job; contradictions/retractions predicates.
+	•	Situation brief generator; evaluation dashboard; alerts on predicates of interest.
+
+Phase 3 (Weeks 11–16):
+	•	Additional sources (Telegram, LinkedIn, forums, email).
+	•	I18N v1; vector search optional; public feed with redaction.
+
+KPIs: cost/$ per 1k docs, precision/recall @ predicate/topic, latency p95, duplicate rate, coverage per source.
+
+⸻
+
+25) Risks & Mitigations
+	•	LLM cost creep: hard budgets, route thresholds, batch, truncate.
+	•	Index hot‑spotting: date sharding + chunking; Cloud Tasks concurrency caps.
+	•	Canonicalization drift: alias governance, adjudication queue, weekly audits.
+	•	Compliance/TOS: prefer official APIs; store provenance; robots compliance.
+	•	Data quality regressions: nightly evals; auto‑rollback on drops.
+
+⸻
+
+26) Naming Conventions & IDs
+	•	ent_{slug} (e.g., ent_bill_clinton), topic.path.with.dots, evt_{YYYYMMDD}_{hash}.
+	•	predicate in snake_case.
+	•	S2 cells 6–8 for city‑level; ISO codes for country/admin1.
+
+⸻
+
+27) Repo Layout (suggested)
+
+/ingest/            # connectors per source
+/pipeline/          # waterfall stages (normalize, tag, ner, claim, topic,...)
+/schemas/           # pydantic models + json schemas
+/indexer/           # posting list writer, chunker
+/api/               # FastAPI/Cloud Run services
+/infra/terraform/   # IaC
+/eval/              # golden set, metrics, dashboards
+/ops_console/       # internal UI
+/shared/            # utils (simhash, s2, currency, tz)
+
+
+⸻
+
+28) Example Posting‑List Writer (pseudo‑Python)
+
+def add_to_posting_list(idx_name, facet_id, yyyymmdd, event_id):
+    base = db.collection(idx_name).document(facet_id).collection("d")
+    for chunk in range(0, 10):
+        doc_id = f"{yyyymmdd}_chunk{chunk}" if chunk > 0 else yyyymmdd
+        ref = base.document(doc_id)
+        snap = ref.get()
+        if not snap.exists or len(snap.to_dict().get("event_ids", [])) < 500:
+            ref.set({
+                "date": f"{yyyymmdd[:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:]}",
+                "chunk": chunk,
+                "event_ids": firestore.ArrayUnion([event_id]),
+                "updated_at": now_iso()
+            }, merge=True)
+            break
+
+
+⸻
+
+29) Situation Brief Generator (outline)
+	1.	Query Events by topic/date.
+	2.	Group by predicate; rank by source reliability & recency.
+	3.	LLM summarizes with bulletproof schema (bullets + key claims + contradictions).
+	4.	Output includes provenance links and confidence bands.
+
+⸻
+
+30) Legal & Compliance Notes
+	•	Store only what’s needed; delete raw PII if unnecessary.
+	•	Clear user notices where required; comply with platform terms and regional laws.
+	•	Keep audit logs of data processing and access.
+
+⸻
+
+31) Glossary (selected)
+	•	Event: structured representation of a happening/statement.
+	•	Predicate: normalized verb/action relating subjects/objects.
+	•	Posting list: compact mapping from a facet (entity/topic/…) to Event IDs by day.
+	•	Two‑hop: exploration via neighbors (co‑mentions) using edge weights.
+
+⸻
+
+32) Next Actions
+	•	Stand up Terraform baseline; create buckets, Firestore, Pub/Sub, budgets.
+	•	Implement Normalizer + Deduper; connect one source (RSS or X).
+	•	Ship Event v1 + index writer + /events endpoint.
+	•	Prepare golden set seeds and taxonomy v1.

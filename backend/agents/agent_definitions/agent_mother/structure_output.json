@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "people": {
+      "type": "array",
+      "description": "List of all people mentioned in the text",
+      "items": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "Person's first name or given name"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Person's last name or family name"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Complete name as mentioned in text"
+          }
+        },
+        "required": ["full_name"]
+      }
+    },
+    "places": {
+      "type": "array",
+      "description": "List of all places mentioned in the text",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the place"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of place (city, country, region, landmark, building, etc.)"
+          }
+        },
+        "required": ["name", "type"]
+      }
+    }
+  },
+  "required": ["people", "places"]
+}

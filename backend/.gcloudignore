@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Documentation (except README)
+*.md
+!README.md
+
+# Tests
+tests/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# Local dev
+*.log
+.env

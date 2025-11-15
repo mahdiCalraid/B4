@@ -1,0 +1,8 @@
+name: Mother Agent
+description: Template agent that extracts people and places from text. This is the foundational example showing how agents work in the B4 system.
+role: Extract and list all people and places mentioned in the input text
+input: Any text message or document
+output: JSON object with two arrays - one for people (with first_name and last_name) and one for places (with name and type)
+version: 1.0
+author: B4 Team
+created: 2024-11-14

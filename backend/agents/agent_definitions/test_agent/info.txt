@@ -1,0 +1,9 @@
+name: Test Agent
+description: Comprehensive testing agent for validating AI model capabilities across different providers. Tests structured output, reasoning, and extraction abilities.
+role: Test and validate AI model functionality including text generation, structured output, entity extraction, and reasoning capabilities
+input: Any test prompt or instruction
+output: JSON object with test results including model_used, test_type, extracted_data, reasoning_quality, and performance_metrics
+version: 1.0
+author: B4 Team
+created: 2024-11-14
+purpose: Testing different AI models (GPT-4, Gemini, LLaMA, etc.) with identical prompts to compare performance and capabilities
