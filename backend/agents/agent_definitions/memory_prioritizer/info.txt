@@ -1,0 +1,19 @@
+name: memory_prioritizer
+version: 1.0
+stage: 5_integration
+type: prioritization
+role: Memory Priority and Importance Scoring Agent
+
+description:
+Determines the priority and importance of memories for storage.
+Assigns decay rates, relevance scores, and storage priorities.
+
+input: All analyzed information from previous stages
+output: JSON with prioritized memory components
+
+capabilities:
+- Importance scoring
+- Relevance assessment
+- Decay rate calculation
+- Storage priority assignment
+- Memory type classification

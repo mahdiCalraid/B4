@@ -1,0 +1,13 @@
+name: attention_filter
+version: 1.0
+stage: 1_attention
+type: filter
+description: Fast triage to filter irrelevant content using pattern matching and cached entities
+default_model: regex
+escalation_model: gpt-oss-20b
+capabilities:
+  - Pattern matching for known entities
+  - Domain relevance detection
+  - Importance scoring
+  - Database entity lookup
+  - Spam/duplicate filtering

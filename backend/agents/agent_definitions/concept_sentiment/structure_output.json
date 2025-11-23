@@ -1,0 +1,111 @@
+{
+  "type": "object",
+  "properties": {
+    "key_concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "concept": {"type": "string"},
+          "domain": {"type": "string", "description": "Field or domain of the concept"},
+          "importance": {"type": "number", "description": "0-1 importance score"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["concept", "importance", "confidence"]
+      }
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "theme": {"type": "string"},
+          "category": {"type": "string", "description": "technology, business, personal, etc."},
+          "prominence": {"type": "number", "description": "0-1 how prominent"},
+          "examples": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "required": ["theme", "category", "prominence"]
+      }
+    },
+    "overall_sentiment": {
+      "type": "object",
+      "properties": {
+        "sentiment": {"type": "string", "description": "positive, negative, neutral, mixed"},
+        "score": {"type": "number", "description": "-1 to 1, where -1 is most negative"},
+        "confidence": {"type": "number"},
+        "intensity": {"type": "number", "description": "0-1 emotional intensity"}
+      },
+      "required": ["sentiment", "score", "confidence"]
+    },
+    "entity_sentiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": {"type": "string"},
+          "sentiment": {"type": "string"},
+          "score": {"type": "number"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["entity", "sentiment", "score"]
+      },
+      "description": "Sentiment towards specific entities"
+    },
+    "emotions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "emotion": {"type": "string"},
+          "intensity": {"type": "number", "description": "0-1 intensity"},
+          "target": {"type": "string", "description": "What the emotion is about"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["emotion", "intensity", "confidence"]
+      }
+    },
+    "opinions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "opinion": {"type": "string"},
+          "holder": {"type": "string", "description": "Who holds this opinion"},
+          "certainty": {"type": "string", "description": "stated, implied, speculated"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["opinion", "certainty", "confidence"]
+      }
+    },
+    "importance_markers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "marker": {"type": "string"},
+          "type": {"type": "string", "description": "priority, urgency, critical, emphasis"},
+          "target": {"type": "string", "description": "What is marked as important"}
+        }
+      }
+    },
+    "subjectivity": {
+      "type": "object",
+      "properties": {
+        "objectivity_score": {"type": "number", "description": "0-1, where 1 is completely objective"},
+        "speculation_level": {"type": "number", "description": "0-1, amount of speculation"},
+        "factual_claims": {"type": "integer"},
+        "opinion_statements": {"type": "integer"},
+        "uncertain_statements": {"type": "integer"}
+      }
+    },
+    "concept_summary": {
+      "type": "string",
+      "description": "Brief summary of main concepts and sentiment"
+    },
+    "analysis_confidence": {"type": "number", "description": "Overall analysis confidence (0-1)"}
+  },
+  "required": ["key_concepts", "themes", "overall_sentiment", "subjectivity", "analysis_confidence"]
+}

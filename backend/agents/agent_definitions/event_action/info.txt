@@ -1,0 +1,19 @@
+name: event_action
+version: 1.0
+stage: 3_comprehension
+type: extraction
+role: Event and Action Detection Agent
+
+description:
+Identifies events, actions, and state changes described in the input.
+Extracts what happened, what's happening, and what will happen.
+
+input: Text with contextual enrichment
+output: JSON with events, actions, and state changes
+
+capabilities:
+- Event detection and classification
+- Action identification
+- State change recognition
+- Temporal sequencing
+- Cause-effect relationships

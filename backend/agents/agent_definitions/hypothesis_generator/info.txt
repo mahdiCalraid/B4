@@ -1,0 +1,19 @@
+name: hypothesis_generator
+version: 1.0
+stage: 4_consolidation
+type: inference
+role: Hypothesis and Insight Generation Agent
+
+description:
+Generates hypotheses, predictions, and insights based on the
+analyzed information. Creates potential implications and scenarios.
+
+input: Consolidated information from previous stages
+output: JSON with hypotheses, predictions, and insights
+
+capabilities:
+- Pattern recognition
+- Trend analysis
+- Prediction generation
+- Implication assessment
+- Scenario planning

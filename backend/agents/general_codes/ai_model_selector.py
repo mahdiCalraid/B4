@@ -12,9 +12,14 @@ import os
 from modules.agents.base_ai_agent import BaseAIAgent
 from modules.agents.gemini_agent import GeminiAgent
 from modules.agents.openai_agent import OpenAIAgent
-from modules.agents.groq_agent import GroqAgent
+# from modules.agents.groq_agent import GroqAgent  # Temporarily disabled - missing groq package
 from modules.agents.ollama_agent import OllamaAgent
 from modules.agents.deepinfra_agent import DeepInfraAgent
+
+# Placeholder for GroqAgent
+class GroqAgent:
+    """Placeholder for GroqAgent when groq package is not installed."""
+    pass
 
 
 # Model registry with provider mapping

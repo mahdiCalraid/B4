@@ -64,10 +64,12 @@ class AgentLoader:
                 model_name=os.getenv("OPENAI_MODEL", "gpt-4o-mini")
             )
         elif provider_name == "groq":
-            from modules.agents.groq_agent import GroqAgent
-            provider = GroqAgent(
-                model_name=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-            )
+            # Temporarily disabled - groq package not installed
+            raise ValueError("Groq provider temporarily unavailable - missing groq package")
+            # from modules.agents.groq_agent import GroqAgent
+            # provider = GroqAgent(
+            #     model_name=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+            # )
         elif provider_name == "ollama":
             from modules.agents.ollama_agent import OllamaAgent
             provider = OllamaAgent(
@@ -131,12 +133,46 @@ class AgentLoader:
         # Get provider
         ai_provider = self._get_provider(provider)
 
-        # Create agent instance
-        agent = BaseAgent(
-            agent_id=agent_id,
-            agent_path=agents[agent_id],
-            ai_provider=ai_provider
-        )
+        # Check if agent has custom implementation
+        custom_agent_path = agents[agent_id] / "agent.py"
+        if custom_agent_path.exists():
+            # Load custom agent class
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(f"{agent_id}_agent", custom_agent_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            # Find the agent class (look for class that ends with 'Agent')
+            agent_class = None
+            for name, obj in vars(module).items():
+                if (name.endswith('Agent') and
+                    isinstance(obj, type) and
+                    name != 'BaseAgent'):
+                    agent_class = obj
+                    break
+
+            if agent_class:
+                # Use custom agent class
+                agent = agent_class(
+                    agent_id=agent_id,
+                    agent_path=agents[agent_id],
+                    ai_provider=ai_provider
+                )
+                print(f"✅ Loaded custom agent: {agent_id}")
+            else:
+                # Fall back to base agent
+                agent = BaseAgent(
+                    agent_id=agent_id,
+                    agent_path=agents[agent_id],
+                    ai_provider=ai_provider
+                )
+        else:
+            # Use base agent
+            agent = BaseAgent(
+                agent_id=agent_id,
+                agent_path=agents[agent_id],
+                ai_provider=ai_provider
+            )
 
         # Cache and return
         self._agents_cache[cache_key] = agent

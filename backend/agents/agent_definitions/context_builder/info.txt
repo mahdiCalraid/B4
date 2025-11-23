@@ -1,0 +1,16 @@
+name: context_builder
+version: 1.0
+stage: 2_perception
+type: enrichment
+role: Context Enrichment Agent
+
+description:
+Builds temporal and contextual understanding by retrieving related memories
+and establishing connections to existing knowledge in the database.
+
+input: Filtered input text with attention signals
+output: JSON with temporal context, related memories, and knowledge connections
+
+dependencies:
+- Requires BigQuery access for memory retrieval
+- Uses entity hints from attention_filter

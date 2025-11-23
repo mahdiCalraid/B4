@@ -176,7 +176,7 @@ class BaseAgent(ABC):
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Process input through the agent.
+        Process input through the agent with integrated logging.
 
         Args:
             input_data: Input text/message for the agent
@@ -186,57 +186,97 @@ class BaseAgent(ABC):
         Returns:
             Processed result as dictionary
         """
-        # Import here to avoid circular dependency
-        from agents.general_codes.ai_model_selector import get_model_selector
+        # Get the waterfall logger
+        from agents.general_codes.waterfall_logger import get_waterfall_logger
+        logger = get_waterfall_logger()
 
-        # If model is specified, use model selector instead of default provider
-        if model:
-            selector = get_model_selector()
+        # Log agent start
+        logger.agent_start(self.agent_id, model)
+        logger.agent_step(self.agent_id, "Received input", {
+            "input_length": len(input_data),
+            "model_requested": model
+        })
 
+        try:
+            # Import here to avoid circular dependency
+            from agents.general_codes.ai_model_selector import get_model_selector
+
+            # Format the prompt with input_data
+            # Some prompts have placeholders, some don't
+            formatted_prompt = self.prompt_template
+            if "{input_data}" in formatted_prompt:
+                formatted_prompt = formatted_prompt.format(input_data=input_data)
+            elif "{input}" in formatted_prompt:
+                formatted_prompt = formatted_prompt.format(input=input_data)
+            # If no placeholder, the input will be passed separately to the AI
+
+            # If model is specified, use model selector instead of default provider
+            if model:
+                logger.agent_step(self.agent_id, "Using model selector", {"model": model})
+                selector = get_model_selector()
+
+                if self.output_schema:
+                    logger.agent_step(self.agent_id, "Generating structured output")
+                    response_model = self._create_pydantic_model()
+                    result = await selector.generate_structured(
+                        input_text=input_data,
+                        output_schema=response_model,
+                        model=model,
+                        system_prompt=formatted_prompt,
+                        **kwargs
+                    )
+                    final_result = result.model_dump() if hasattr(result, 'model_dump') else result
+                else:
+                    logger.agent_step(self.agent_id, "Generating unstructured output")
+                    result = await selector.generate(
+                        input_text=input_data,
+                        model=model,
+                        system_prompt=formatted_prompt,
+                        **kwargs
+                    )
+                    final_result = {"result": result}
+
+                logger.agent_step(self.agent_id, "AI processing complete", {
+                    "output_keys": list(final_result.keys()) if isinstance(final_result, dict) else "non-dict"
+                })
+                logger.agent_result(self.agent_id, final_result)
+                return final_result
+
+            # Use default provider
+            if not self.ai_provider:
+                error_msg = f"Agent {self.agent_id} has no AI provider configured"
+                logger.agent_error(self.agent_id, error_msg)
+                raise ValueError(error_msg)
+
+            logger.agent_step(self.agent_id, "Using default provider")
+
+            # Use structured output if schema is defined
             if self.output_schema:
+                logger.agent_step(self.agent_id, "Generating structured output with default provider")
                 response_model = self._create_pydantic_model()
-                result = await selector.generate_structured(
-                    input_text=input_data,
-                    output_schema=response_model,
-                    model=model,
-                    system_prompt=self.prompt_template,
+                result = await self.ai_provider.generate_structured(
+                    prompt=input_data,
+                    response_model=response_model,
+                    system_prompt=formatted_prompt,
                     **kwargs
                 )
-                return result.model_dump()
+                final_result = result.model_dump() if hasattr(result, 'model_dump') else result
             else:
-                result = await selector.generate(
-                    input_text=input_data,
-                    model=model,
-                    system_prompt=self.prompt_template,
+                # Fallback to plain text generation
+                logger.agent_step(self.agent_id, "Generating unstructured output with default provider")
+                result = await self.ai_provider.generate(
+                    prompt=input_data,
+                    system_prompt=formatted_prompt,
                     **kwargs
                 )
-                return {"result": result}
+                final_result = {"result": result}
 
-        # Use default provider
-        if not self.ai_provider:
-            raise ValueError(f"Agent {self.agent_id} has no AI provider configured")
+            logger.agent_result(self.agent_id, final_result)
+            return final_result
 
-        # Build full prompt
-        full_prompt = f"{self.prompt_template}\n\nInput: {input_data}"
-
-        # Use structured output if schema is defined
-        if self.output_schema:
-            response_model = self._create_pydantic_model()
-            result = await self.ai_provider.generate_structured(
-                prompt=input_data,
-                response_model=response_model,
-                system_prompt=self.prompt_template,
-                **kwargs
-            )
-            return result.model_dump()
-        else:
-            # Fallback to plain text generation
-            result = await self.ai_provider.generate(
-                prompt=input_data,
-                system_prompt=self.prompt_template,
-                **kwargs
-            )
-            return {"result": result}
+        except Exception as e:
+            logger.agent_error(self.agent_id, str(e), e)
+            raise
 
     def get_info(self) -> Dict[str, Any]:
         """Get agent metadata."""

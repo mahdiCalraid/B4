@@ -1,0 +1,141 @@
+{
+  "type": "object",
+  "properties": {
+    "memory_components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component_id": {"type": "string"},
+          "content_summary": {"type": "string"},
+          "memory_type": {"type": "string", "description": "episodic, semantic, procedural, emotional, social"},
+          "importance_score": {"type": "number", "description": "0-1 importance"},
+          "storage_priority": {"type": "string", "description": "critical, important, useful, optional, skip"},
+          "relevance_domains": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "domain": {"type": "string"},
+                "relevance": {"type": "number"}
+              }
+            }
+          },
+          "decay_profile": {
+            "type": "object",
+            "properties": {
+              "initial_strength": {"type": "number", "description": "0-1 initial memory strength"},
+              "decay_rate": {"type": "string", "description": "fast, medium, slow, permanent"},
+              "half_life_days": {"type": "number"},
+              "reinforcement_triggers": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "retrieval_keys": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Keywords and phrases for retrieval"
+          },
+          "temporal_markers": {
+            "type": "object",
+            "properties": {
+              "event_time": {"type": "string"},
+              "reference_frame": {"type": "string", "description": "past, present, future"},
+              "time_sensitivity": {"type": "string", "description": "high, medium, low"}
+            }
+          },
+          "compression": {
+            "type": "object",
+            "properties": {
+              "essential_facts": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "supplementary_details": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "discardable": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        },
+        "required": ["component_id", "memory_type", "importance_score", "storage_priority", "decay_profile"]
+      }
+    },
+    "memory_clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cluster_theme": {"type": "string"},
+          "member_components": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "cluster_importance": {"type": "number"},
+          "interconnection_strength": {"type": "number"}
+        }
+      },
+      "description": "Groups of related memory components"
+    },
+    "storage_recommendations": {
+      "type": "object",
+      "properties": {
+        "immediate_storage": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Components to store immediately"
+        },
+        "delayed_storage": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Components to store after processing"
+        },
+        "conditional_storage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "component": {"type": "string"},
+              "condition": {"type": "string"}
+            }
+          },
+          "description": "Components to store conditionally"
+        },
+        "skip_storage": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Components not worth storing"
+        }
+      }
+    },
+    "priority_summary": {
+      "type": "object",
+      "properties": {
+        "critical_count": {"type": "integer"},
+        "important_count": {"type": "integer"},
+        "useful_count": {"type": "integer"},
+        "optional_count": {"type": "integer"},
+        "skip_count": {"type": "integer"},
+        "average_importance": {"type": "number"},
+        "total_components": {"type": "integer"}
+      }
+    },
+    "retention_forecast": {
+      "type": "object",
+      "properties": {
+        "day_1_retention": {"type": "number", "description": "Percent retained after 1 day"},
+        "week_1_retention": {"type": "number", "description": "Percent retained after 1 week"},
+        "month_1_retention": {"type": "number", "description": "Percent retained after 1 month"},
+        "permanent_memories": {"type": "integer", "description": "Count of permanent memories"}
+      }
+    },
+    "prioritization_confidence": {"type": "number", "description": "Overall confidence in prioritization (0-1)"}
+  },
+  "required": ["memory_components", "storage_recommendations", "priority_summary", "prioritization_confidence"]
+}

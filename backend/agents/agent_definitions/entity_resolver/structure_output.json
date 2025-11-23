@@ -1,0 +1,132 @@
+{
+  "type": "object",
+  "properties": {
+    "resolved_entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "canonical_name": {"type": "string"},
+          "entity_type": {"type": "string"},
+          "entity_subtype": {"type": "string"},
+          "mentions": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "All text mentions of this entity"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "description": {"type": "string"},
+              "role": {"type": "string"},
+              "location": {"type": "string"},
+              "affiliation": {"type": "string"},
+              "category": {"type": "string"}
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "related_entity": {"type": "string"},
+                "relationship_type": {"type": "string"},
+                "direction": {"type": "string", "description": "to, from, bidirectional"}
+              }
+            }
+          },
+          "enrichment": {
+            "type": "object",
+            "properties": {
+              "wikipedia_link": {"type": "string"},
+              "domain": {"type": "string"},
+              "importance_score": {"type": "number"},
+              "is_public_figure": {"type": "boolean"}
+            }
+          },
+          "confidence": {"type": "number"},
+          "resolution_method": {"type": "string", "description": "exact_match, fuzzy_match, contextual, inferred"}
+        },
+        "required": ["canonical_name", "entity_type", "mentions", "confidence"]
+      }
+    },
+    "coreferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reference": {"type": "string", "description": "The pronoun or reference"},
+          "referent": {"type": "string", "description": "What it refers to"},
+          "confidence": {"type": "number"}
+        }
+      },
+      "description": "Resolved coreferences"
+    },
+    "disambiguation_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ambiguous_mention": {"type": "string"},
+          "chosen_entity": {"type": "string"},
+          "alternatives": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "reasoning": {"type": "string"},
+          "confidence": {"type": "number"}
+        }
+      }
+    },
+    "entity_graph": {
+      "type": "object",
+      "properties": {
+        "nodes": {"type": "integer", "description": "Number of unique entities"},
+        "edges": {"type": "integer", "description": "Number of relationships"},
+        "clusters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cluster_type": {"type": "string", "description": "organizational, topical, etc."},
+              "members": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "unresolved_entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mention": {"type": "string"},
+          "reason": {"type": "string", "description": "Why it couldn't be resolved"},
+          "suggestions": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+    "resolution_summary": {
+      "type": "object",
+      "properties": {
+        "total_mentions": {"type": "integer"},
+        "unique_entities": {"type": "integer"},
+        "resolved_count": {"type": "integer"},
+        "unresolved_count": {"type": "integer"},
+        "confidence_avg": {"type": "number"}
+      }
+    },
+    "resolution_confidence": {"type": "number", "description": "Overall resolution confidence (0-1)"}
+  },
+  "required": ["resolved_entities", "resolution_summary", "resolution_confidence"]
+}

@@ -1,0 +1,19 @@
+name: entity_extractor
+version: 1.0
+stage: 3_comprehension
+type: extraction
+role: Entity Extraction and Classification Agent
+
+description:
+Extracts and classifies all entities mentioned in the input including
+people, organizations, locations, products, technologies, and concepts.
+
+input: Text with contextual enrichment
+output: JSON with extracted entities and their classifications
+
+capabilities:
+- Person identification with role detection
+- Organization and company extraction
+- Location and place identification
+- Product and technology detection
+- Concept and topic extraction

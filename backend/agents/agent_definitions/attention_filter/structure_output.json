@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "should_process": {
+      "type": "boolean",
+      "description": "Whether the input should proceed through the memory pipeline"
+    },
+    "relevance_score": {
+      "type": "number",
+      "description": "Relevance score from 0 to 1"
+    },
+    "importance_score": {
+      "type": "number",
+      "description": "Importance score from 0 to 1"
+    },
+    "detected_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of detected topic domains"
+    },
+    "entity_hints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Entity text as found in input"
+          },
+          "type": {
+            "type": "string",
+            "description": "Entity type: person, organization, place, product, project"
+          }
+        }
+      },
+      "description": "Entities detected in the input"
+    },
+    "information_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Types of information signals detected"
+    },
+    "skip_reason": {
+      "type": "string",
+      "description": "Reason for skipping if should_process is false"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Brief explanation of the assessment"
+    }
+  },
+  "required": ["should_process", "relevance_score", "importance_score"]
+}

@@ -1,0 +1,19 @@
+name: concept_sentiment
+version: 1.0
+stage: 3_comprehension
+type: analysis
+role: Concept and Sentiment Analysis Agent
+
+description:
+Extracts key concepts, themes, and emotional sentiment from the input.
+Analyzes tone, mood, and subjective elements.
+
+input: Text with contextual enrichment
+output: JSON with concepts, themes, and sentiment analysis
+
+capabilities:
+- Concept and theme extraction
+- Sentiment analysis (positive/negative/neutral)
+- Emotion detection
+- Opinion mining
+- Importance assessment

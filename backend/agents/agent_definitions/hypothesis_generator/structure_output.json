@@ -1,0 +1,151 @@
+{
+  "type": "object",
+  "properties": {
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pattern": {"type": "string"},
+          "type": {"type": "string", "description": "recurring, emerging, anomaly, cycle"},
+          "evidence": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "significance": {"type": "number", "description": "0-1 significance score"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["pattern", "type", "significance", "confidence"]
+      }
+    },
+    "predictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "prediction": {"type": "string"},
+          "timeframe": {"type": "string"},
+          "probability": {"type": "number", "description": "0-1 probability"},
+          "impact": {"type": "string", "description": "low, medium, high"},
+          "evidence_basis": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "confidence": {"type": "number"}
+        },
+        "required": ["prediction", "probability", "impact", "confidence"]
+      }
+    },
+    "implications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "implication": {"type": "string"},
+          "category": {"type": "string", "description": "direct, indirect, long-term"},
+          "affected_entities": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "severity": {"type": "string", "description": "minor, moderate, major"},
+          "timeframe": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["implication", "category", "severity", "confidence"]
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hypothesis": {"type": "string"},
+          "type": {"type": "string", "description": "explanatory, predictive, causal, correlational"},
+          "supporting_evidence": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "contradicting_evidence": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "testability": {"type": "string", "description": "How to test this hypothesis"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["hypothesis", "type", "confidence"]
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenario_type": {"type": "string", "description": "best-case, worst-case, most-likely, alternative"},
+          "description": {"type": "string"},
+          "probability": {"type": "number"},
+          "triggers": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "What would trigger this scenario"
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "confidence": {"type": "number"}
+        },
+        "required": ["scenario_type", "description", "probability", "confidence"]
+      }
+    },
+    "insights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "insight": {"type": "string"},
+          "type": {"type": "string", "description": "connection, opportunity, risk, strategic"},
+          "novelty": {"type": "number", "description": "0-1 how novel/surprising"},
+          "actionability": {"type": "number", "description": "0-1 how actionable"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["insight", "type", "confidence"]
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {"type": "string"},
+          "category": {"type": "string", "description": "factual, investigative, strategic"},
+          "priority": {"type": "string", "description": "low, medium, high"},
+          "suggested_approach": {"type": "string"}
+        },
+        "required": ["question", "category", "priority"]
+      }
+    },
+    "action_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {"type": "string"},
+          "rationale": {"type": "string"},
+          "urgency": {"type": "string", "description": "immediate, soon, eventual"},
+          "expected_outcome": {"type": "string"}
+        },
+        "required": ["action", "rationale", "urgency"]
+      }
+    },
+    "synthesis": {
+      "type": "string",
+      "description": "Overall synthesis of hypotheses and insights"
+    },
+    "generation_confidence": {"type": "number", "description": "Overall confidence in generated hypotheses (0-1)"}
+  },
+  "required": ["predictions", "hypotheses", "insights", "synthesis", "generation_confidence"]
+}

@@ -1,0 +1,428 @@
+{
+  "workflow": {
+    "name": "B4 Memory Waterfall Pipeline",
+    "version": "1.0",
+    "description": "Neuroscience-inspired 5-stage memory formation pipeline",
+    "stages": [
+      "ATTENTION",
+      "PERCEPTION",
+      "COMPREHENSION",
+      "CONSOLIDATION",
+      "INTEGRATION"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "input",
+      "type": "trigger",
+      "name": "Input Source",
+      "stage": null,
+      "position": {"x": 0, "y": 200},
+      "outputs": {
+        "main": [
+          {
+            "type": "text",
+            "format": "raw_input",
+            "description": "Unstructured text input"
+          }
+        ]
+      }
+    },
+    {
+      "id": "attention_filter",
+      "type": "processor",
+      "name": "Attention Filter",
+      "stage": "ATTENTION",
+      "position": {"x": 200, "y": 200},
+      "model": "gemini-2.0-flash",
+      "description": "Fast triage to filter irrelevant content",
+      "inputs": {
+        "main": [
+          {
+            "from": "input",
+            "type": "text",
+            "format": "raw_input"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "attention_decision",
+            "fields": ["should_process", "relevance_score", "importance_score", "entity_hints"]
+          }
+        ],
+        "rejected": [
+          {
+            "type": "object",
+            "fields": ["skip_reason"],
+            "condition": "should_process == false"
+          }
+        ]
+      },
+      "parameters": {
+        "threshold_relevance": 0.3,
+        "threshold_importance": 0.2,
+        "quick_filter": true
+      }
+    },
+    {
+      "id": "context_builder",
+      "type": "processor",
+      "name": "Context Builder",
+      "stage": "PERCEPTION",
+      "position": {"x": 400, "y": 200},
+      "model": "gemini-2.0-flash",
+      "description": "Builds temporal and contextual understanding",
+      "inputs": {
+        "main": [
+          {
+            "from": "attention_filter",
+            "type": "object",
+            "condition": "should_process == true"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "enriched_context",
+            "fields": ["temporal_context", "spatial_context", "related_memories", "causal_analysis"]
+          }
+        ]
+      },
+      "database_access": {
+        "bigquery": {
+          "tables": ["memories", "entities", "events"],
+          "operations": ["search_similar", "get_related"]
+        }
+      }
+    },
+    {
+      "id": "entity_extractor",
+      "type": "processor",
+      "name": "Entity Extractor",
+      "stage": "COMPREHENSION",
+      "position": {"x": 600, "y": 100},
+      "model": "gpt-4o-mini",
+      "description": "Extracts and classifies all entities",
+      "parallel": true,
+      "inputs": {
+        "main": [
+          {
+            "from": "context_builder",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "entities",
+            "fields": ["people", "organizations", "locations", "products", "technologies", "events", "concepts"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "event_action",
+      "type": "processor",
+      "name": "Event & Action Detector",
+      "stage": "COMPREHENSION",
+      "position": {"x": 600, "y": 200},
+      "model": "gemini-2.0-flash",
+      "description": "Identifies events, actions, and state changes",
+      "parallel": true,
+      "inputs": {
+        "main": [
+          {
+            "from": "context_builder",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "events_actions",
+            "fields": ["events", "actions", "state_changes", "processes", "causal_relationships"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "concept_sentiment",
+      "type": "processor",
+      "name": "Concept & Sentiment Analyzer",
+      "stage": "COMPREHENSION",
+      "position": {"x": 600, "y": 300},
+      "model": "gemini-2.0-flash",
+      "description": "Extracts concepts, themes, and sentiment",
+      "parallel": true,
+      "inputs": {
+        "main": [
+          {
+            "from": "context_builder",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "concepts_sentiment",
+            "fields": ["key_concepts", "themes", "overall_sentiment", "emotions", "opinions"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "entity_resolver",
+      "type": "processor",
+      "name": "Entity Resolver",
+      "stage": "CONSOLIDATION",
+      "position": {"x": 800, "y": 150},
+      "model": "gpt-4o",
+      "description": "Resolves, disambiguates, and enriches entities",
+      "inputs": {
+        "main": [
+          {
+            "from": "entity_extractor",
+            "type": "object"
+          },
+          {
+            "from": "event_action",
+            "type": "object"
+          },
+          {
+            "from": "concept_sentiment",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "resolved_entities",
+            "fields": ["resolved_entities", "coreferences", "entity_graph", "disambiguation_decisions"]
+          }
+        ]
+      },
+      "database_access": {
+        "bigquery": {
+          "tables": ["entity_registry", "entity_relationships"],
+          "operations": ["lookup", "match", "enrich"]
+        }
+      }
+    },
+    {
+      "id": "hypothesis_generator",
+      "type": "processor",
+      "name": "Hypothesis Generator",
+      "stage": "CONSOLIDATION",
+      "position": {"x": 800, "y": 250},
+      "model": "gpt-4o",
+      "description": "Generates insights, predictions, and hypotheses",
+      "inputs": {
+        "main": [
+          {
+            "from": "entity_extractor",
+            "type": "object"
+          },
+          {
+            "from": "event_action",
+            "type": "object"
+          },
+          {
+            "from": "concept_sentiment",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "hypotheses",
+            "fields": ["patterns", "predictions", "implications", "hypotheses", "scenarios", "insights"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "memory_prioritizer",
+      "type": "processor",
+      "name": "Memory Prioritizer",
+      "stage": "INTEGRATION",
+      "position": {"x": 1000, "y": 200},
+      "model": "gemini-2.0-flash",
+      "description": "Determines priority and importance for storage",
+      "inputs": {
+        "main": [
+          {
+            "from": "entity_resolver",
+            "type": "object"
+          },
+          {
+            "from": "hypothesis_generator",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "prioritized_memories",
+            "fields": ["memory_components", "storage_recommendations", "priority_summary", "retention_forecast"]
+          }
+        ]
+      },
+      "parameters": {
+        "decay_rates": ["fast", "medium", "slow", "permanent"],
+        "priority_levels": ["critical", "important", "useful", "optional", "skip"]
+      }
+    },
+    {
+      "id": "memory_writer",
+      "type": "processor",
+      "name": "Memory Writer",
+      "stage": "INTEGRATION",
+      "position": {"x": 1200, "y": 200},
+      "model": "gpt-4o",
+      "description": "Formats and structures memories for storage",
+      "inputs": {
+        "main": [
+          {
+            "from": "memory_prioritizer",
+            "type": "object"
+          }
+        ]
+      },
+      "outputs": {
+        "main": [
+          {
+            "type": "object",
+            "schema": "memory_records",
+            "fields": ["memory_records", "storage_summary", "index_entries", "write_operations"]
+          }
+        ]
+      },
+      "database_access": {
+        "bigquery": {
+          "tables": ["memories", "memory_connections", "memory_index"],
+          "operations": ["insert", "update", "link"]
+        }
+      }
+    },
+    {
+      "id": "output",
+      "type": "endpoint",
+      "name": "Memory Storage",
+      "stage": null,
+      "position": {"x": 1400, "y": 200},
+      "inputs": {
+        "main": [
+          {
+            "from": "memory_writer",
+            "type": "object"
+          }
+        ]
+      },
+      "storage": {
+        "destination": "bigquery",
+        "format": "structured_memory"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "input",
+      "target": "attention_filter",
+      "type": "main",
+      "data_flow": "raw_text"
+    },
+    {
+      "source": "attention_filter",
+      "target": "context_builder",
+      "type": "conditional",
+      "condition": "should_process == true",
+      "data_flow": "filtered_input"
+    },
+    {
+      "source": "context_builder",
+      "target": "entity_extractor",
+      "type": "parallel_split",
+      "data_flow": "enriched_context"
+    },
+    {
+      "source": "context_builder",
+      "target": "event_action",
+      "type": "parallel_split",
+      "data_flow": "enriched_context"
+    },
+    {
+      "source": "context_builder",
+      "target": "concept_sentiment",
+      "type": "parallel_split",
+      "data_flow": "enriched_context"
+    },
+    {
+      "source": ["entity_extractor", "event_action", "concept_sentiment"],
+      "target": "entity_resolver",
+      "type": "merge",
+      "data_flow": "comprehension_results"
+    },
+    {
+      "source": ["entity_extractor", "event_action", "concept_sentiment"],
+      "target": "hypothesis_generator",
+      "type": "merge",
+      "data_flow": "comprehension_results"
+    },
+    {
+      "source": ["entity_resolver", "hypothesis_generator"],
+      "target": "memory_prioritizer",
+      "type": "merge",
+      "data_flow": "consolidated_data"
+    },
+    {
+      "source": "memory_prioritizer",
+      "target": "memory_writer",
+      "type": "main",
+      "data_flow": "prioritized_memories"
+    },
+    {
+      "source": "memory_writer",
+      "target": "output",
+      "type": "main",
+      "data_flow": "formatted_memories"
+    }
+  ],
+  "execution": {
+    "mode": "waterfall",
+    "error_handling": "continue_on_error",
+    "timeout_per_node": 30,
+    "parallel_execution": {
+      "stage_3": ["entity_extractor", "event_action", "concept_sentiment"],
+      "stage_4": ["entity_resolver", "hypothesis_generator"]
+    }
+  },
+  "models": {
+    "cost_optimization": {
+      "cheap": ["gemini-2.0-flash", "gpt-oss-20b"],
+      "balanced": ["gpt-4o-mini", "claude-3-haiku"],
+      "expensive": ["gpt-4o", "claude-3-opus", "gemini-pro"]
+    },
+    "fallback_chain": [
+      "gemini-2.0-flash",
+      "gpt-4o-mini",
+      "gpt-4o"
+    ]
+  }
+}

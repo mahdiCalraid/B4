@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "properties": {
+    "temporal_context": {
+      "type": "object",
+      "properties": {
+        "time_references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {"type": "string"},
+              "type": {"type": "string", "description": "date, time, relative, duration"},
+              "normalized": {"type": "string", "description": "ISO format if applicable"}
+            }
+          }
+        },
+        "temporal_scope": {
+          "type": "string",
+          "description": "past, present, future, ongoing"
+        },
+        "duration_estimate": {
+          "type": "string",
+          "description": "Estimated duration or time span"
+        }
+      }
+    },
+    "spatial_context": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "type": {"type": "string", "description": "city, country, region, building, etc."},
+              "scope": {"type": "string", "description": "local, regional, national, global"}
+            }
+          }
+        },
+        "movement_pattern": {
+          "type": "string",
+          "description": "static, travel, migration, expansion"
+        }
+      }
+    },
+    "related_memories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "connection_type": {"type": "string", "description": "similar, causal, temporal, thematic"},
+          "relevance_score": {"type": "number"},
+          "description": {"type": "string"}
+        }
+      },
+      "description": "Simulated related memories that would be retrieved"
+    },
+    "causal_analysis": {
+      "type": "object",
+      "properties": {
+        "potential_causes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "potential_effects": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "causal_confidence": {"type": "number", "description": "0-1 confidence in causal relationships"}
+      }
+    },
+    "social_context": {
+      "type": "object",
+      "properties": {
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "role": {"type": "string"},
+              "relationship": {"type": "string", "description": "Relationship to other actors"}
+            }
+          }
+        },
+        "organizations": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "social_dynamics": {"type": "string", "description": "cooperation, competition, conflict, etc."}
+      }
+    },
+    "context_confidence": {
+      "type": "number",
+      "description": "Overall confidence in context understanding (0-1)"
+    },
+    "missing_context": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "What context is needed but missing"
+    }
+  },
+  "required": ["temporal_context", "spatial_context", "context_confidence"]
+}

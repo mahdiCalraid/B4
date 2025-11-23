@@ -28,12 +28,13 @@ except Exception as e:
 
 # Load environment variables early
 # Try to load from secrets/.env first, then fall back to default .env
+# Use override=True to ensure secrets/.env takes precedence over shell env vars
 secrets_env = Path(__file__).resolve().parents[2] / "secrets" / ".env"
 if secrets_env.exists():
-    load_dotenv(dotenv_path=secrets_env)
-    print(f"✅ Loaded environment from {secrets_env}")
+    load_dotenv(dotenv_path=secrets_env, override=True)
+    print(f"✅ Loaded environment from {secrets_env} (with override)")
 else:
-    load_dotenv()
+    load_dotenv(override=True)
     print(f"⚠️  Using default .env (secrets/.env not found)")
 
 # Ensure world_model source directory is on sys.path for local execution

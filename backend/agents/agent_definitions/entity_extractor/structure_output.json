@@ -1,0 +1,110 @@
+{
+  "type": "object",
+  "properties": {
+    "people": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "text_reference": {"type": "string", "description": "Exact text from input"},
+          "role": {"type": "string"},
+          "organization": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "organizations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string", "description": "company, government, non-profit, etc."},
+          "industry": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string", "description": "country, city, building, etc."},
+          "scope": {"type": "string", "description": "local, regional, national, global"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string", "description": "software, hardware, service, etc."},
+          "vendor": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "technologies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "category": {"type": "string", "description": "AI, space, biotech, etc."},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "type": {"type": "string", "description": "meeting, launch, conference, etc."},
+          "date": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "domain": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "entity_relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity1": {"type": "string"},
+          "relationship": {"type": "string"},
+          "entity2": {"type": "string"}
+        }
+      },
+      "description": "Relationships between extracted entities"
+    },
+    "total_entities": {"type": "integer"},
+    "extraction_confidence": {"type": "number", "description": "Overall extraction confidence (0-1)"}
+  },
+  "required": ["people", "organizations", "locations", "total_entities", "extraction_confidence"]
+}

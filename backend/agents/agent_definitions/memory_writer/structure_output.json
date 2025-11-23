@@ -1,0 +1,207 @@
+{
+  "type": "object",
+  "properties": {
+    "memory_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "memory_id": {"type": "string", "description": "Unique identifier"},
+          "core_content": {
+            "type": "object",
+            "properties": {
+              "primary": {"type": "string", "description": "Main information"},
+              "summary": {"type": "string", "description": "Brief summary"},
+              "full_detail": {"type": "string", "description": "Complete information"},
+              "abstract": {"type": "string", "description": "High-level overview"}
+            },
+            "required": ["primary", "summary"]
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "created_at": {"type": "string", "description": "ISO timestamp"},
+              "source": {"type": "string"},
+              "confidence": {"type": "number"},
+              "verification_status": {"type": "string", "description": "verified, unverified, partial"},
+              "importance_score": {"type": "number"},
+              "access_count": {"type": "integer"},
+              "last_accessed": {"type": "string"}
+            },
+            "required": ["created_at", "confidence", "importance_score"]
+          },
+          "classification": {
+            "type": "object",
+            "properties": {
+              "memory_type": {"type": "string"},
+              "categories": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "tags": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "domains": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "sensitivity": {"type": "string", "description": "public, private, sensitive"}
+            },
+            "required": ["memory_type", "categories"]
+          },
+          "temporal_data": {
+            "type": "object",
+            "properties": {
+              "event_time": {"type": "string"},
+              "temporal_scope": {"type": "string", "description": "point, range, ongoing"},
+              "duration": {"type": "string"},
+              "recurrence": {"type": "string"},
+              "temporal_context": {"type": "string"}
+            }
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "entity_id": {"type": "string"},
+                "name": {"type": "string"},
+                "type": {"type": "string"},
+                "role": {"type": "string"},
+                "attributes": {
+                  "type": "object"
+                }
+              },
+              "required": ["entity_id", "name", "type"]
+            }
+          },
+          "semantic_data": {
+            "type": "object",
+            "properties": {
+              "concepts": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "themes": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "sentiment": {"type": "string"},
+              "emotions": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "retrieval_keys": {
+            "type": "object",
+            "properties": {
+              "keywords": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "query_patterns": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "index_terms": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "connections": {
+            "type": "object",
+            "properties": {
+              "related_memories": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "prerequisite_memories": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "consequent_memories": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "supporting_memories": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "storage_directives": {
+            "type": "object",
+            "properties": {
+              "table_name": {"type": "string"},
+              "compression": {"type": "string", "description": "none, light, heavy"},
+              "retention_days": {"type": "integer"},
+              "backup_priority": {"type": "string", "description": "low, medium, high"},
+              "indexing_priority": {"type": "string", "description": "low, medium, high"}
+            }
+          }
+        },
+        "required": ["memory_id", "core_content", "metadata", "classification"]
+      }
+    },
+    "storage_summary": {
+      "type": "object",
+      "properties": {
+        "total_memories": {"type": "integer"},
+        "by_type": {
+          "type": "object",
+          "properties": {
+            "episodic": {"type": "integer"},
+            "semantic": {"type": "integer"},
+            "procedural": {"type": "integer"},
+            "emotional": {"type": "integer"},
+            "social": {"type": "integer"}
+          }
+        },
+        "by_importance": {
+          "type": "object",
+          "properties": {
+            "critical": {"type": "integer"},
+            "important": {"type": "integer"},
+            "useful": {"type": "integer"},
+            "optional": {"type": "integer"}
+          }
+        },
+        "total_entities": {"type": "integer"},
+        "total_connections": {"type": "integer"}
+      }
+    },
+    "index_entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "index_key": {"type": "string"},
+          "memory_ids": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "index_type": {"type": "string", "description": "keyword, entity, concept, temporal"}
+        }
+      },
+      "description": "Index entries for fast retrieval"
+    },
+    "write_operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "operation": {"type": "string", "description": "insert, update, link"},
+          "target": {"type": "string"},
+          "priority": {"type": "string"},
+          "estimated_size_kb": {"type": "number"}
+        }
+      },
+      "description": "Database operations to perform"
+    },
+    "formation_confidence": {"type": "number", "description": "Overall confidence in memory formation (0-1)"}
+  },
+  "required": ["memory_records", "storage_summary", "formation_confidence"]
+}

@@ -1,0 +1,19 @@
+name: memory_writer
+version: 1.0
+stage: 5_integration
+type: storage
+role: Memory Formation and Storage Agent
+
+description:
+Formats and structures memories for storage in the database.
+Creates final memory records with all metadata and connections.
+
+input: Prioritized information from all stages
+output: JSON with formatted memory records ready for storage
+
+capabilities:
+- Memory structuring
+- Metadata generation
+- Index creation
+- Connection mapping
+- Storage optimization

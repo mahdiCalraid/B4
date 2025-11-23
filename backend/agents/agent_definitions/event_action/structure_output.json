@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {"type": "string"},
+          "type": {"type": "string", "description": "announcement, meeting, launch, etc."},
+          "temporal_status": {"type": "string", "description": "past, present, future"},
+          "date": {"type": "string"},
+          "actors": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "location": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["description", "type", "temporal_status", "confidence"]
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actor": {"type": "string", "description": "Who/what performs the action"},
+          "action": {"type": "string", "description": "The action being performed"},
+          "object": {"type": "string", "description": "Target or object of the action"},
+          "status": {"type": "string", "description": "planned, in-progress, completed"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["actor", "action", "status", "confidence"]
+      }
+    },
+    "state_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": {"type": "string"},
+          "from_state": {"type": "string"},
+          "to_state": {"type": "string"},
+          "trigger": {"type": "string", "description": "What caused the change"},
+          "when": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["entity", "to_state", "confidence"]
+      }
+    },
+    "processes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "stage": {"type": "string", "description": "Current stage or phase"},
+          "duration": {"type": "string"},
+          "expected_outcome": {"type": "string"},
+          "confidence": {"type": "number"}
+        },
+        "required": ["name", "confidence"]
+      }
+    },
+    "causal_relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cause": {"type": "string"},
+          "effect": {"type": "string"},
+          "certainty": {"type": "string", "description": "certain, probable, possible"},
+          "timeframe": {"type": "string"}
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "properties": {
+        "past_events": {"type": "integer"},
+        "present_events": {"type": "integer"},
+        "future_events": {"type": "integer"},
+        "temporal_span": {"type": "string", "description": "Time span covered by events"}
+      }
+    },
+    "action_summary": {
+      "type": "string",
+      "description": "Brief summary of main actions and events"
+    },
+    "total_detections": {"type": "integer"},
+    "detection_confidence": {"type": "number", "description": "Overall detection confidence (0-1)"}
+  },
+  "required": ["events", "actions", "timeline", "total_detections", "detection_confidence"]
+}
