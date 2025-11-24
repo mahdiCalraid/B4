@@ -9,7 +9,7 @@ const ExecutionLog = ({ logs = [] }) => {
     }, [logs]);
 
     return (
-        <div className="w-80 bg-slate-900 border-l border-slate-700 flex flex-col h-full">
+        <div className="flex-1 bg-slate-900 flex flex-col h-full">
             <div className="p-4 border-b border-slate-700 flex items-center gap-2">
                 <Terminal size={16} className="text-blue-400" />
                 <h2 className="text-slate-100 font-semibold">Execution Log</h2>

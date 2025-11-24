@@ -196,10 +196,11 @@ const AgentGraph = ({ traceData, workflowData, onNodeClick, onWorkflowChange, se
         isUndoRedoRef.current = false;
     }, [nodes, edges]);
 
-    // Keyboard handler for delete
+    // Keyboard handler for delete (Shift+Delete)
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === 'Delete' || event.key === 'Backspace') {
+            // Only delete if Shift+Delete is pressed
+            if ((event.key === 'Delete' || event.key === 'Backspace') && event.shiftKey) {
                 const selectedNodes = nodes.filter(node => node.selected);
                 const selectedEdges = edges.filter(edge => edge.selected);
 

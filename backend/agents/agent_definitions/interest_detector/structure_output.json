@@ -1,0 +1,57 @@
+{
+    "type": "object",
+    "properties": {
+        "interesting": {
+            "type": "array",
+            "description": "List of detected interesting content items",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "interesting_field": {
+                        "type": "string",
+                        "enum": [
+                            "LIFE_EVENTS",
+                            "WORK_OR_PROJECTS",
+                            "OPENBOOK_RELATED",
+                            "HEALTH_INFORMATION",
+                            "PEOPLE",
+                            "ORGANIZATIONS",
+                            "PLACES",
+                            "TASKS",
+                            "TECHNICAL_OR_SCIENTIFIC_KNOWLEDGE",
+                            "REFLECTION",
+                            "FINANCE_OR_BUSINESS",
+                            "PLANS_OR_DECISIONS",
+                            "INSIGHTFUL_QUESTIONS",
+                            "OTHER_INSIGHT"
+                        ],
+                        "description": "The category of interesting content detected"
+                    },
+                    "interesting_score": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "description": "Confidence score (0-100) indicating how interesting/relevant this content is. Higher scores mean more important or actionable content."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Brief explanation of why this content is interesting and belongs to this category"
+                    },
+                    "text_snippet": {
+                        "type": "string",
+                        "description": "The relevant portion of text that triggered this interest detection"
+                    }
+                },
+                "required": [
+                    "interesting_field",
+                    "interesting_score",
+                    "reason",
+                    "text_snippet"
+                ]
+            }
+        }
+    },
+    "required": [
+        "interesting"
+    ]
+}

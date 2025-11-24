@@ -13,6 +13,8 @@ function App() {
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const [pendingWorkflowId, setPendingWorkflowId] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [rightPanelWidth, setRightPanelWidth] = useState(384); // Default 384px (w-96)
+  const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
     // Poll for trace data (mock or real)
@@ -162,6 +164,38 @@ function App() {
     }
   };
 
+  // Resize handlers for right panel
+  const handleMouseDown = (e) => {
+    setIsResizing(true);
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isResizing) return;
+
+      const newWidth = window.innerWidth - e.clientX;
+      // Constrain between 256px and 800px
+      if (newWidth >= 256 && newWidth <= 800) {
+        setRightPanelWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
   return (
     <div className="flex h-screen bg-slate-950 text-slate-200 font-sans overflow-hidden">
       {/* Left Sidebar */}
@@ -240,8 +274,19 @@ function App() {
             )}
           </div>
 
-          {/* Right Panel: Execution Log */}
-          <ExecutionLog logs={logs} />
+          {/* Right Panel: Execution Log with Resize Handle */}
+          <div
+            className="relative flex"
+            style={{ width: `${rightPanelWidth}px` }}
+          >
+            {/* Resize Handle */}
+            <div
+              onMouseDown={handleMouseDown}
+              className={`w-1 bg-slate-700 hover:bg-blue-500 cursor-col-resize transition-colors shrink-0 ${isResizing ? 'bg-blue-500' : ''}`}
+              style={{ touchAction: 'none' }}
+            />
+            <ExecutionLog logs={logs} />
+          </div>
         </div>
       </div>
     </div>

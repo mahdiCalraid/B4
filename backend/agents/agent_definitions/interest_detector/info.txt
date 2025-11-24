@@ -1,0 +1,12 @@
+name: interest_detector
+version: 1.0
+stage: 1_attention
+type: filter
+description: AI-powered interest detection that identifies meaningful content across 14 categories of personal relevance
+default_model: gemini-2.0-flash-exp
+capabilities:
+  - Semantic understanding of 14 interest categories
+  - Confidence scoring per detected interest
+  - Reasoning explanation for each match
+  - Text snippet extraction
+  - Multi-category detection
