@@ -1,0 +1,125 @@
+{
+  "name": "Untitled Workflow",
+  "description": "New empty workflow",
+  "nodes": [
+    {
+      "id": "new_node_1763952248387",
+      "position": {
+        "x": 285.9680758873244,
+        "y": 25.46807588732449
+      },
+      "data": {
+        "label": "New Node",
+        "stepData": {
+          "node_name": "New Node",
+          "input_data": {},
+          "output_data": {},
+          "timestamp": "2025-11-24T02:44:08.388Z",
+          "step_id": "new_node_1763952248387"
+        }
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "new_node_1763952256436",
+      "position": {
+        "x": 362.5,
+        "y": 117.5
+      },
+      "data": {
+        "label": "New Node",
+        "stepData": {
+          "node_name": "New Node",
+          "input_data": {},
+          "output_data": {},
+          "timestamp": "2025-11-24T02:44:16.436Z",
+          "step_id": "new_node_1763952256436"
+        }
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "input-text_1763968974890",
+      "position": {
+        "x": 173.5,
+        "y": 64
+      },
+      "data": {
+        "label": "Text Input",
+        "type": "input-text",
+        "text": "hi\n"
+      },
+      "type": "textInput",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 384,
+      "height": 320
+    },
+    {
+      "id": "input-text_1763968993497",
+      "type": "textInput",
+      "position": {
+        "x": -335.6082928128695,
+        "y": -1033.222772838231
+      },
+      "data": {
+        "label": "Text Input",
+        "type": "input-text",
+        "text": "hi"
+      },
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 384,
+      "height": 320,
+      "selected": true,
+      "dragging": false
+    }
+  ],
+  "edges": [],
+  "id": "4809f51b-a1ea-4b6b-9ba5-bdc922fbe8ba",
+  "updated_at": "2025-11-24T02:23:22.283474"
+}

@@ -104,3 +104,57 @@ class BaseModule(ABC):
             "module_version": self.version,
             "timestamp": datetime.now().isoformat()
         }
+
+
+# --- Tracing Infrastructure ---
+
+class TraceEntry:
+    """Represents a single step in an execution trace."""
+    def __init__(
+        self,
+        trace_id: str,
+        node_name: str,
+        input_data: Dict[str, Any],
+        output_data: Optional[Dict[str, Any]] = None,
+        parent_id: Optional[str] = None,
+        timestamp: Optional[str] = None
+    ):
+        self.trace_id = trace_id
+        self.node_name = node_name
+        self.input_data = input_data
+        self.output_data = output_data
+        self.parent_id = parent_id
+        self.timestamp = timestamp or datetime.now().isoformat()
+        self.step_id = f"{node_name}_{datetime.now().timestamp()}"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "trace_id": self.trace_id,
+            "step_id": self.step_id,
+            "node_name": self.node_name,
+            "input_data": self.input_data,
+            "output_data": self.output_data,
+            "parent_id": self.parent_id,
+            "timestamp": self.timestamp
+        }
+
+# Global in-memory store for traces
+# Structure: { trace_id: [TraceEntry, ...] }
+TRACE_STORE: Dict[str, list] = {}
+
+def add_trace_step(trace_id: str, node_name: str, input_data: Dict[str, Any], output_data: Optional[Dict[str, Any]] = None) -> None:
+    """Record a step in the trace."""
+    if trace_id not in TRACE_STORE:
+        TRACE_STORE[trace_id] = []
+    
+    entry = TraceEntry(trace_id, node_name, input_data, output_data)
+    TRACE_STORE[trace_id].append(entry)
+
+def update_trace_step(trace_id: str, node_name: str, output_data: Dict[str, Any]) -> None:
+    """Update the last step for this node with output data."""
+    if trace_id in TRACE_STORE:
+        # Find the last entry for this node that doesn't have output yet
+        for entry in reversed(TRACE_STORE[trace_id]):
+            if entry.node_name == node_name and entry.output_data is None:
+                entry.output_data = output_data
+                return

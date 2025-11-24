@@ -1,0 +1,194 @@
+{
+    "nodes": [
+        {
+            "id": "agent-entity_resolver",
+            "name": "Entity Resolver",
+            "category": "agent",
+            "runner": "runners.agent.AgentRunner",
+            "path": "agents/agent_definitions/entity_resolver",
+            "description": "Resolves entities from text",
+            "icon": "bot",
+            "color": "#dbeafe"
+        },
+        {
+            "id": "agent-memory_prioritizer",
+            "name": "Memory Prioritizer",
+            "category": "agent",
+            "runner": "runners.agent.AgentRunner",
+            "path": "agents/agent_definitions/memory_prioritizer",
+            "description": "Prioritizes memory items",
+            "icon": "bot",
+            "color": "#dbeafe"
+        },
+        {
+            "id": "connector-twitter",
+            "name": "X (Twitter)",
+            "category": "connector",
+            "runner": "runners.connector.ConnectorRunner",
+            "module": "connectors.base.TwitterConnector",
+            "description": "Extract data from X/Twitter",
+            "icon": "twitter",
+            "color": "#000000"
+        },
+        {
+            "id": "logic-router",
+            "name": "Router",
+            "category": "logic",
+            "runner": "runners.logic.LogicRunner",
+            "module": "logic.base.RouterNode",
+            "description": "Route execution based on condition",
+            "icon": "git-branch",
+            "color": "#f59e0b"
+        },
+        {
+            "id": "trigger-manual",
+            "name": "Manual Trigger",
+            "category": "trigger",
+            "description": "Starts the workflow when clicked.",
+            "runner": "runners.trigger.TriggerRunner",
+            "config_schema": {},
+            "input_schema": {},
+            "output_schema": {}
+        },
+        {
+            "id": "input-text",
+            "name": "Text Input",
+            "category": "trigger",
+            "description": "Allows user to input text to start a workflow",
+            "runner": "runners.trigger.TriggerRunner",
+            "module": "modules.input_node.InputNode",
+            "icon": "message-square",
+            "color": "#10b981"
+        },
+        {
+            "id": "bq-read",
+            "name": "BigQuery Read",
+            "category": "data",
+            "description": "Reads data from BigQuery.",
+            "runner": "runners.base.BaseNodeRunner",
+            "config_schema": {},
+            "input_schema": {},
+            "output_schema": {}
+        },
+        {
+            "id": "bq-write",
+            "name": "BigQuery Write",
+            "category": "data",
+            "description": "Writes data to BigQuery.",
+            "runner": "runners.base.BaseNodeRunner",
+            "config_schema": {},
+            "input_schema": {},
+            "output_schema": {}
+        },
+        {
+            "id": "ai-agent",
+            "name": "AI Agent",
+            "category": "agent",
+            "description": "General purpose AI agent.",
+            "runner": "runners.agent.AgentRunner",
+            "config_schema": {},
+            "input_schema": {},
+            "output_schema": {}
+        },
+        {
+            "id": "structured-output",
+            "name": "Structured Output",
+            "category": "logic",
+            "description": "Parses AI output into structured JSON format",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.structured_output.StructuredOutputNode",
+            "icon": "file-json",
+            "color": "#8b5cf6"
+        },
+        {
+            "id": "wm-pattern-filter",
+            "name": "Pattern Filter (WM)",
+            "category": "logic",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.pattern_filter.PatternFilterNode",
+            "description": "Filters input based on regex patterns.",
+            "icon": "filter",
+            "color": "#ef4444"
+        },
+        {
+            "id": "wm-context-builder",
+            "name": "Context Builder (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.context_builder.ContextBuilderNode",
+            "description": "Builds context from input and memory.",
+            "icon": "map",
+            "color": "#3b82f6"
+        },
+        {
+            "id": "wm-entity-extractor",
+            "name": "Entity Extractor (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.entity_extractor.EntityExtractorNode",
+            "description": "Extracts entities from text.",
+            "icon": "users",
+            "color": "#10b981"
+        },
+        {
+            "id": "wm-event-action",
+            "name": "Event Action (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.event_action.EventActionNode",
+            "description": "Extracts events and actions.",
+            "icon": "activity",
+            "color": "#8b5cf6"
+        },
+        {
+            "id": "wm-concept-sentiment",
+            "name": "Concept & Sentiment (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.concept_sentiment.ConceptSentimentNode",
+            "description": "Extracts concepts and sentiment.",
+            "icon": "lightbulb",
+            "color": "#f59e0b"
+        },
+        {
+            "id": "wm-entity-resolver",
+            "name": "Entity Resolver (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.entity_resolver.EntityResolverNode",
+            "description": "Resolves entities against database.",
+            "icon": "check-circle",
+            "color": "#ec4899"
+        },
+        {
+            "id": "wm-hypothesis-generator",
+            "name": "Hypothesis Generator (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.hypothesis_generator.HypothesisGeneratorNode",
+            "description": "Generates hypotheses from uncertain data.",
+            "icon": "help-circle",
+            "color": "#6366f1"
+        },
+        {
+            "id": "wm-memory-prioritizer",
+            "name": "Memory Prioritizer (WM)",
+            "category": "agent",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.memory_prioritizer.MemoryPrioritizerNode",
+            "description": "Prioritizes memories for storage.",
+            "icon": "list",
+            "color": "#f97316"
+        },
+        {
+            "id": "wm-memory-writer",
+            "name": "Memory Writer (WM)",
+            "category": "connector",
+            "runner": "runners.world_model.WorldModelRunner",
+            "module": "modules.memory_writer.MemoryWriterNode",
+            "description": "Writes memories to BigQuery.",
+            "icon": "database",
+            "color": "#64748b"
+        }
+    ]
+}

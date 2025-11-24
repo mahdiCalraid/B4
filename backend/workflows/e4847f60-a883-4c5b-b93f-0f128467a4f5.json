@@ -1,0 +1,77 @@
+{
+  "name": "Untitled Workflow",
+  "description": "New empty workflow",
+  "nodes": [
+    {
+      "id": "new_node_1763952593913",
+      "position": {
+        "x": 174,
+        "y": -14
+      },
+      "data": {
+        "label": "New Node",
+        "stepData": {
+          "node_name": "New Node",
+          "input_data": {},
+          "output_data": {},
+          "timestamp": "2025-11-24T02:49:53.913Z",
+          "step_id": "new_node_1763952593913"
+        }
+      },
+      "type": "default",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 52
+    },
+    {
+      "id": "new_node_1763952596119",
+      "position": {
+        "x": 270,
+        "y": 126
+      },
+      "data": {
+        "label": "New Node",
+        "stepData": {
+          "node_name": "New Node",
+          "input_data": {},
+          "output_data": {},
+          "timestamp": "2025-11-24T02:49:56.119Z",
+          "step_id": "new_node_1763952596119"
+        }
+      },
+      "type": "default",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 52,
+      "selected": true,
+      "positionAbsolute": {
+        "x": 270,
+        "y": 126
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [],
+  "id": "e4847f60-a883-4c5b-b93f-0f128467a4f5",
+  "updated_at": "2025-11-23T21:58:33.891049"
+}

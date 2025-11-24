@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Node Definition Schema",
+    "description": "Defines the capabilities and requirements of a Node Type (The Class)",
+    "type": "object",
+    "required": [
+        "id",
+        "name",
+        "category",
+        "runner",
+        "config_schema",
+        "input_schema",
+        "output_schema"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Unique identifier for the node type (e.g., connector-bigquery)"
+        },
+        "name": {
+            "type": "string",
+            "description": "Display name of the node type"
+        },
+        "category": {
+            "type": "string",
+            "enum": [
+                "agent",
+                "connector",
+                "logic",
+                "trigger"
+            ],
+            "description": "Category of the node"
+        },
+        "runner": {
+            "type": "string",
+            "description": "Python path to the Runner class (e.g., backend.runners.bigquery.BigQueryRunner)"
+        },
+        "description": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string",
+            "default": "1.0.0"
+        },
+        "icon": {
+            "type": "string",
+            "description": "Lucide icon name"
+        },
+        "color": {
+            "type": "string",
+            "description": "Hex color code"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "config_schema": {
+            "type": "array",
+            "description": "Configuration parameters required by this node",
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type",
+                    "label"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "select",
+                            "secret",
+                            "sql",
+                            "json"
+                        ]
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "default": {},
+                    "options": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "input_schema": {
+            "type": "object",
+            "description": "JSON Schema for input data"
+        },
+        "output_schema": {
+            "type": "object",
+            "description": "JSON Schema for output data"
+        }
+    }
+}

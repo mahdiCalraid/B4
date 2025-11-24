@@ -39,6 +39,9 @@ else:
 
 # Ensure world_model source directory is on sys.path for local execution
 ROOT_DIR = Path(__file__).resolve().parents[2]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
+
 WORLD_MODEL_SRC = ROOT_DIR / "world_model" / "src"
 if WORLD_MODEL_SRC.exists() and str(WORLD_MODEL_SRC) not in sys.path:
     sys.path.append(str(WORLD_MODEL_SRC))
@@ -58,6 +61,99 @@ app.add_middleware(
 )
 
 app.include_router(get_api_router())
+
+@app.get("/api/traces")
+async def get_traces() -> dict:
+    """Get all recorded traces."""
+    from modules.base import TRACE_STORE
+    
+    # Return summary of traces (id, timestamp, first input)
+    summaries = []
+    for trace_id, steps in TRACE_STORE.items():
+        if not steps:
+            continue
+        first_step = steps[0]
+        summaries.append({
+            "trace_id": trace_id,
+            "timestamp": first_step.timestamp,
+            "input_preview": str(first_step.input_data.get("text", ""))[:50],
+            "step_count": len(steps)
+        })
+    
+    # Sort by timestamp desc
+    summaries.sort(key=lambda x: x["timestamp"], reverse=True)
+    return {"traces": summaries}
+
+@app.get("/api/traces/{trace_id}")
+async def get_trace_detail(trace_id: str) -> dict:
+    """Get detailed steps for a specific trace."""
+    from modules.base import TRACE_STORE
+    
+    if trace_id not in TRACE_STORE:
+        return {"error": "Trace not found"}
+        
+    return {
+        "trace_id": trace_id,
+        "steps": [step.to_dict() for step in TRACE_STORE[trace_id]]
+    }
+
+@app.get("/api/nodes")
+async def get_nodes() -> dict:
+    """Get all available nodes (Agents, Connectors, Logic)."""
+    from registry import registry
+    
+    # Refresh registry on request (for dev mode)
+    registry.scan_all()
+    
+    return {
+        "nodes": registry.list_nodes()
+    }
+
+@app.post("/api/workflows/execute")
+async def execute_workflow(workflow: dict) -> dict:
+    """Execute a workflow."""
+    from engine import engine
+    execution_id = await engine.execute_workflow(workflow)
+    return {"execution_id": execution_id, "status": "started"}
+
+@app.get("/api/execution/{execution_id}/status")
+async def get_execution_status(execution_id: str) -> dict:
+    """Get status of an execution."""
+    from engine import engine
+    
+    context = engine.executions.get(execution_id)
+    if not context:
+        return {"error": "Execution not found"}
+        
+    return {
+        "execution_id": execution_id,
+        "state": context.state,
+        "error": getattr(context, "error", None),
+        "outputs": context.node_outputs,
+        "logs": getattr(context, "logs", [])
+    }
+
+@app.get("/api/workflows")
+async def list_workflows() -> dict:
+    """List all available workflows."""
+    from workflow_store import workflow_store
+    return {"workflows": workflow_store.list_workflows()}
+
+@app.post("/api/workflows")
+async def save_workflow(workflow: dict) -> dict:
+    """Save a workflow."""
+    from workflow_store import workflow_store
+    workflow_id = workflow_store.save_workflow(workflow)
+    return {"id": workflow_id, "status": "saved"}
+
+@app.get("/api/workflows/{workflow_id}")
+async def get_workflow(workflow_id: str) -> dict:
+    """Get a specific workflow."""
+    from workflow_store import workflow_store
+    workflow = workflow_store.get_workflow(workflow_id)
+    if not workflow:
+        return {"error": "Workflow not found"}
+    return workflow
 
 
 @app.get("/")

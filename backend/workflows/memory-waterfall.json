@@ -1,0 +1,425 @@
+{
+  "id": "memory-waterfall",
+  "name": "Second Brain Memory Waterfall",
+  "description": "Full memory formation pipeline from Attention to Integration.",
+  "updated_at": "2025-11-24T02:24:13.854260",
+  "nodes": [
+    {
+      "id": "node-1",
+      "position": {
+        "x": 47.883474479429935,
+        "y": -188.4130103944782
+      },
+      "data": {
+        "label": "Pattern Filter",
+        "type": "wm-pattern-filter",
+        "config": {
+          "patterns": [
+            "Elon Musk",
+            "Mars",
+            "AI",
+            "SpaceX"
+          ]
+        }
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 98
+    },
+    {
+      "id": "node-2",
+      "position": {
+        "x": 52.99998107104034,
+        "y": 9.250638218843847
+      },
+      "data": {
+        "label": "Context Builder",
+        "type": "wm-context-builder"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 98
+    },
+    {
+      "id": "node-3",
+      "position": {
+        "x": 49.113637028118376,
+        "y": 221.33842063867138
+      },
+      "data": {
+        "label": "Entity Extractor",
+        "type": "wm-entity-extractor"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "node-4",
+      "position": {
+        "x": -257.9038313234656,
+        "y": 218.56896559246934
+      },
+      "data": {
+        "label": "Event Action",
+        "type": "wm-event-action"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "node-5",
+      "position": {
+        "x": 385.4046966427053,
+        "y": 223.20197712783238
+      },
+      "data": {
+        "label": "Concept & Sentiment",
+        "type": "wm-concept-sentiment"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 209,
+      "height": 82
+    },
+    {
+      "id": "node-6",
+      "position": {
+        "x": -117.24266345204938,
+        "y": 469.5110342311706
+      },
+      "data": {
+        "label": "Entity Resolver",
+        "type": "wm-entity-resolver"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "node-7",
+      "position": {
+        "x": 390.1882783579383,
+        "y": 475.2743182196456
+      },
+      "data": {
+        "label": "Hypothesis Generator",
+        "type": "wm-hypothesis-generator"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 214,
+      "height": 82
+    },
+    {
+      "id": "node-8",
+      "position": {
+        "x": 99.66731042145443,
+        "y": 705.3202644106065
+      },
+      "data": {
+        "label": "Memory Prioritizer",
+        "type": "wm-memory-prioritizer"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "node-9",
+      "position": {
+        "x": 99.18163104787317,
+        "y": 913.6556843054667
+      },
+      "data": {
+        "label": "Memory Writer",
+        "type": "wm-memory-writer"
+      },
+      "type": "custom",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 200,
+      "height": 82
+    },
+    {
+      "id": "input-text_1763968182379",
+      "position": {
+        "x": -79.75286380960262,
+        "y": -774.1830356122533
+      },
+      "data": {
+        "label": "Text Input",
+        "type": "input-text",
+        "text": "hi"
+      },
+      "type": "textInput",
+      "style": {
+        "background": "#ffffff",
+        "border": "1px solid #e2e8f0",
+        "borderRadius": "12px",
+        "padding": "16px",
+        "minWidth": "200px",
+        "textAlign": "left",
+        "color": "#1e293b",
+        "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "fontFamily": "Inter, sans-serif"
+      },
+      "width": 384,
+      "height": 320,
+      "selected": true,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "node-1",
+      "target": "node-2",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e2",
+      "source": "node-2",
+      "target": "node-3",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e3",
+      "source": "node-2",
+      "target": "node-4",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e4",
+      "source": "node-2",
+      "target": "node-5",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e5",
+      "source": "node-3",
+      "target": "node-6",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e6",
+      "source": "node-4",
+      "target": "node-6",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e7",
+      "source": "node-5",
+      "target": "node-7",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e8",
+      "source": "node-6",
+      "target": "node-8",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e9",
+      "source": "node-7",
+      "target": "node-8",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "e10",
+      "source": "node-8",
+      "target": "node-9",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "id": "reactflow__edge-input-text_1763968182379output-node-1input",
+      "source": "input-text_1763968182379",
+      "target": "node-1",
+      "type": "smoothstep",
+      "markerEnd": {
+        "type": "arrowclosed"
+      },
+      "animated": false,
+      "style": {
+        "stroke": "#94a3b8",
+        "strokeWidth": 2
+      }
+    }
+  ]
+}

@@ -36,6 +36,14 @@ export GEMINI_API_KEY="AIzaSyDHsFM9dLjuywFv5VTq0Li5fnJsuQviy2M"
 # Add your DeepInfra API key here for gpt-oss-20b support
 # export DEEPINFRA_API_KEY="your_deepinfra_api_key_here"
 
+# Kill process on port 8080 if it exists
+PID=$(lsof -ti :8080)
+if [ -n "$PID" ]; then
+    echo "⚠️  Killing existing process on port 8080 (PID: $PID)..."
+    kill -9 $PID
+    sleep 1 # Give it a moment to release the port
+fi
+
 echo ""
 echo "✅ Starting server on http://localhost:8080"
 echo ""

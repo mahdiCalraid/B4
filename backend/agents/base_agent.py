@@ -291,3 +291,33 @@ class BaseAgent(ABC):
             "config": self.config,
             "provider": self.ai_provider.get_info() if self.ai_provider else None
         }
+    def to_node_schema(self) -> 'NodeSchema':
+        """Convert this agent to a NodeSchema."""
+        from schema.node import NodeSchema, NodeType, NodeConfig
+        
+        return NodeSchema(
+            id=f"agent-{self.agent_id}",
+            name=self.info.get("name", self.agent_id),
+            type=NodeType.AGENT,
+            description=self.info.get("description", ""),
+            icon="bot",
+            color="#dbeafe",
+            config_schema=[
+                NodeConfig(
+                    name="model",
+                    type="select",
+                    label="AI Model",
+                    description="Model to use for generation",
+                    options=["gpt-4o", "gemini-1.5-pro", "claude-3-5-sonnet"],
+                    default="gemini-1.5-pro"
+                )
+            ],
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "input": {"type": "string", "description": self.info.get("input", "Input text")}
+                }
+            },
+            output_schema=self.output_schema or {"type": "object", "description": "Unstructured output"},
+            tags=["ai", "agent"]
+        )

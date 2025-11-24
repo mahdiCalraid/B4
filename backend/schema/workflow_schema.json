@@ -1,0 +1,111 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Workflow Schema",
+    "description": "Defines a saved Workflow containing Node Instances (The Graph)",
+    "type": "object",
+    "required": [
+        "id",
+        "name",
+        "nodes",
+        "edges"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Unique identifier for the workflow"
+        },
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "nodes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "type",
+                    "position",
+                    "data"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique instance ID (e.g., node-1)"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Reference to the Node Definition ID (e.g., connector-bigquery)"
+                    },
+                    "position": {
+                        "type": "object",
+                        "required": [
+                            "x",
+                            "y"
+                        ],
+                        "properties": {
+                            "x": {
+                                "type": "number"
+                            },
+                            "y": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "label": {
+                                "type": "string"
+                            },
+                            "config": {
+                                "type": "object",
+                                "description": "Key-value pairs matching the Node Definition's config_schema"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "edges": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "source",
+                    "target"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "Source Node Instance ID"
+                    },
+                    "target": {
+                        "type": "string",
+                        "description": "Target Node Instance ID"
+                    },
+                    "sourceHandle": {
+                        "type": "string"
+                    },
+                    "targetHandle": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

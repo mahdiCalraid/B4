@@ -26,17 +26,50 @@ class ModuleRouter:
         Returns:
             Module processing result
         """
-        # Explicit module specified
-        if "module" in request_data and request_data["module"]:
-            module_name = request_data["module"]
+        import uuid
+        from .base import add_trace_step, update_trace_step
+
+        # Generate or retrieve trace_id
+        trace_id = request_data.get("trace_id")
+        if not trace_id:
+            trace_id = str(uuid.uuid4())
+            request_data["trace_id"] = trace_id
+
+        # Record Router Entry
+        add_trace_step(trace_id, "Router", request_data)
+
+        try:
+            # Explicit module specified
+            if "module" in request_data and request_data["module"]:
+                module_name = request_data["module"]
+                module = self.registry.get_module(module_name)
+                
+                # Record Module Entry
+                add_trace_step(trace_id, module_name, request_data)
+                result = await module.process(request_data)
+                update_trace_step(trace_id, module_name, result)
+                
+                # Update Router Exit
+                update_trace_step(trace_id, "Router", result)
+                return result
+
+            # Infer module from content
+            module_name = self._infer_module(request_data)
             module = self.registry.get_module(module_name)
-            return await module.process(request_data)
 
-        # Infer module from content
-        module_name = self._infer_module(request_data)
-        module = self.registry.get_module(module_name)
+            # Record Module Entry
+            add_trace_step(trace_id, module_name, request_data)
+            result = await module.process(request_data)
+            update_trace_step(trace_id, module_name, result)
 
-        return await module.process(request_data)
+            # Update Router Exit
+            update_trace_step(trace_id, "Router", result)
+            return result
+            
+        except Exception as e:
+            error_result = {"error": str(e)}
+            update_trace_step(trace_id, "Router", error_result)
+            raise e
 
     def _infer_module(self, request_data: Dict[str, Any]) -> str:
         """
